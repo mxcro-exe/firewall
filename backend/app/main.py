@@ -64,7 +64,7 @@ async def seed_initial_data():
             )
             db.add(demo_site)
 
-        # 3. Seed 7 Attack Defense Modules
+        # 3. Seed 20 Attack Defense Modules
         default_modules = [
             ("ddos", "DDoS & Flood Protection", True, "MEDIUM", '{"rate_limit_per_min": 60, "temp_ban_minutes": 10}'),
             ("sqli", "SQL Injection Shield", True, "HIGH", '{"block_union_select": true, "block_tautologies": true}'),
@@ -73,6 +73,19 @@ async def seed_initial_data():
             ("cmd", "OS Command Injection Blocker", True, "HIGH", '{"block_shell_metachars": true, "block_executables": true}'),
             ("brute", "Brute-Force & Login Defense", True, "MEDIUM", '{"max_failed_attempts": 5, "window_minutes": 5}'),
             ("bot", "Bot & Malicious Scraper Defense", True, "MEDIUM", '{"block_known_bad_ua": true, "challenge_unknown": false}'),
+            ("ssrf", "Server-Side Request Forgery (SSRF)", True, "HIGH", '{"block_cloud_metadata": true, "block_private_cidrs": true}'),
+            ("recon", "Sensitive File Reconnaissance", True, "HIGH", '{"protect_env": true, "protect_git": true, "protect_backups": true}'),
+            ("xxe", "XML External Entity (XXE) Shield", True, "HIGH", '{"block_dtd_entities": true, "block_system_identifiers": true}'),
+            ("ssti", "Server-Side Template Injection (SSTI)", True, "HIGH", '{"block_jinja_twig": true, "block_class_traversal": true}'),
+            ("deserial", "Insecure Deserialization Guard", True, "HIGH", '{"block_pickle": true, "block_php_serialize": true, "block_java_gadgets": true}'),
+            ("redirect", "Open URL Redirection (Phishing)", True, "MEDIUM", '{"block_untrusted_redirects": true, "block_protocol_schemes": true}'),
+            ("csrf", "CSRF & Origin Validation", True, "MEDIUM", '{"verify_origin": true, "block_external_state_change": true}'),
+            ("nosql", "NoSQL Injection Shield", True, "HIGH", '{"block_mongo_operators": true, "block_where_clauses": true}'),
+            ("smuggling", "HTTP Request Smuggling & CRLF", True, "HIGH", '{"block_crlf_split": true, "enforce_te_cl_rfc": true}'),
+            ("ldap", "LDAP Injection Defense", True, "HIGH", '{"block_ldap_wildcards": true, "block_filter_metachars": true}'),
+            ("graphql", "GraphQL Abuse & Introspection", True, "MEDIUM", '{"block_introspection": true, "max_query_depth": 8}'),
+            ("mass_assign", "Mass Assignment & Parameter Tampering", True, "HIGH", '{"block_privilege_escalation": true, "block_param_pollution": true}'),
+            ("proto_abuse", "Protocol & WebSocket Abuse", True, "HIGH", '{"block_illegal_methods": true, "block_null_bytes": true}'),
         ]
         for key, name, enabled, sensitivity, conf in default_modules:
             mod_res = await db.execute(select(AttackModuleSetting).where(AttackModuleSetting.module_key == key))

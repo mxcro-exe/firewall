@@ -100,7 +100,20 @@
     "cmd": "Someone tried to run dangerous operating system commands on your server. We blocked them safely.",
     "brute": "Someone repeatedly guessed passwords to break into your admin area. We locked them out.",
     "ddos": "A sudden flood of fake requests tried to slow down your site. We rate-limited them.",
-    "bot": "An automated hacker scanner bot was searching your site for weaknesses. We dropped it."
+    "bot": "An automated hacker scanner bot was searching your site for weaknesses. We dropped it.",
+    "ssrf": "Someone tried to manipulate your server to secretly access internal cloud services or private network data. We blocked them safely.",
+    "recon": "Someone probed for secret configuration or backup files like .env or database dumps. We trapped and dropped them.",
+    "xxe": "Someone sent a malformed XML file trying to read confidential server files. We blocked them safely.",
+    "ssti": "Someone tried to inject malicious template code to execute commands on your web server. We blocked them safely.",
+    "deserial": "Someone sent crafted serialized object code to trigger remote execution on your server. We blocked them safely.",
+    "redirect": "Someone tried to abuse your store links to redirect shoppers to an external phishing website. We blocked them safely.",
+    "csrf": "An external unauthorized source tried to trigger actions on your store on behalf of a user. We blocked them safely.",
+    "nosql": "Someone tried to bypass authentication using NoSQL database injection operators. We blocked them safely.",
+    "smuggling": "Someone tried to desynchronize HTTP headers or split lines to smuggle hidden requests. We dropped them.",
+    "ldap": "Someone tried to inject wildcard operators into directory search to bypass employee login. We blocked them.",
+    "graphql": "Someone probed your API schema or sent circular query bombs to overwhelm your system. We blocked them.",
+    "mass_assign": "Someone tried to tamper with payment amounts or promote themselves to store administrator. We blocked them.",
+    "proto_abuse": "Someone tried to bypass safety checks using forbidden HTTP methods or null-byte characters. We blocked them."
   },
   "reports": {
     "title": "Executive Security Report",

@@ -63,6 +63,12 @@ export const DemoLab: React.FC = () => {
       case 'honeypot':
         url = `http://localhost:8000/proxy/${selectedSiteId}/.env`;
         break;
+      case 'ssrf':
+        url = `http://localhost:8000/proxy/${selectedSiteId}/api/products?url=http://169.254.169.254/latest/meta-data/`;
+        break;
+      case 'nosql':
+        url = `http://localhost:8000/proxy/${selectedSiteId}/api/products?q[$gt]=`;
+        break;
       default:
         break;
     }
@@ -156,6 +162,26 @@ export const DemoLab: React.FC = () => {
       btnLabel: 'Probe Honeypot URL',
       infoTitle: 'Honeypot Decoy Trap',
       infoDesc: 'Attacker probes hidden files like /.env or /wp-login.php. Gateway returns a fake 404 decoy without touching upstream.'
+    },
+    {
+      id: 'ssrf',
+      title: 'SSRF Cloud Metadata Theft',
+      badge: 'CLOUD THEFT',
+      badgeClass: 'bg-rose-950 text-rose-400 border-rose-500/30',
+      btnClass: 'bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-cream-100 shadow-md',
+      btnLabel: 'Send SSRF Exploit',
+      infoTitle: 'SSRF Metadata Probe',
+      infoDesc: 'Attacker sends URL pointing to 169.254.169.254 to steal AWS/GCP cloud IAM keys. Blocked with 403 Forbidden.'
+    },
+    {
+      id: 'nosql',
+      title: 'NoSQL Operator Injection',
+      badge: 'NOSQL OPERATOR',
+      badgeClass: 'bg-copper-500/20 text-copper-300 border-copper-500/40',
+      btnClass: 'bg-gradient-to-r from-copper-500 to-copper-600 hover:from-copper-400 hover:to-copper-500 text-cream-100 shadow-glow-copper',
+      btnLabel: 'Send NoSQL Exploit',
+      infoTitle: 'MongoDB Operator Injection',
+      infoDesc: 'Attacker injects [$gt]= operator to bypass authentication or dump database documents. Blocked with 403 Forbidden.'
     }
   ];
 

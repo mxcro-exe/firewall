@@ -224,7 +224,7 @@ class ReverseProxyHandler:
                         media_type="application/json"
                     )
 
-            # --- TIER 2: 7 ATTACK-SPECIFIC DEFENCE MODULES ---
+            # --- TIER 2: 20 ATTACK-SPECIFIC DEFENCE MODULES ---
             mod_blocked, mod_key, mod_reason, mod_details = await defense_manager.inspect_request(
                 client_ip=client_ip,
                 method=request.method,
@@ -232,7 +232,8 @@ class ReverseProxyHandler:
                 query_string=query_str,
                 body_text=body_text,
                 user_agent=user_agent,
-                db=db
+                db=db,
+                headers=dict(request.headers)
             )
 
             if mod_blocked:

@@ -204,6 +204,78 @@ export const Dashboard: React.FC = () => {
       infoTitle: 'Malicious Scanner Bots',
       infoDesc: t('simple_mode.bot'),
       badge: 'BOTS'
+    },
+    {
+      key: 'ssrf',
+      title: 'SSRF Cloud Guard',
+      sub: 'Metadata & Internal IP Drop',
+      status: 'ACTIVE',
+      infoTitle: 'Server-Side Request Forgery',
+      infoDesc: t('simple_mode.ssrf'),
+      badge: 'CLOUD'
+    },
+    {
+      key: 'recon',
+      title: 'Secret Recon Trap',
+      sub: '.env & Backup Decoy Trap',
+      status: 'ACTIVE',
+      infoTitle: 'Sensitive File Reconnaissance',
+      infoDesc: t('simple_mode.recon'),
+      badge: 'RECON'
+    },
+    {
+      key: 'nosql',
+      title: 'NoSQL Operator Guard',
+      sub: 'MongoDB Operator Filter',
+      status: 'ACTIVE',
+      infoTitle: 'NoSQL Injection',
+      infoDesc: t('simple_mode.nosql'),
+      badge: 'NOSQL'
+    },
+    {
+      key: 'xxe',
+      title: 'XXE XML Shield',
+      sub: 'Entity & DTD Blocker',
+      status: 'ACTIVE',
+      infoTitle: 'XML External Entity',
+      infoDesc: t('simple_mode.xxe'),
+      badge: 'XML'
+    },
+    {
+      key: 'ssti',
+      title: 'SSTI Template Shield',
+      sub: 'Jinja & Twig Sandbox',
+      status: 'ACTIVE',
+      infoTitle: 'Template Injection',
+      infoDesc: t('simple_mode.ssti'),
+      badge: 'SSTI'
+    },
+    {
+      key: 'deserial',
+      title: 'Insecure Deserialization',
+      sub: 'Pickle & Java Gadget Drop',
+      status: 'ACTIVE',
+      infoTitle: 'Object Deserialization RCE',
+      infoDesc: t('simple_mode.deserial'),
+      badge: 'OBJECT'
+    },
+    {
+      key: 'redirect',
+      title: 'Open Redirect Guard',
+      sub: 'Anti-Phishing Filter',
+      status: 'ACTIVE',
+      infoTitle: 'Open URL Redirection',
+      infoDesc: t('simple_mode.redirect'),
+      badge: 'PHISH'
+    },
+    {
+      key: 'smuggling',
+      title: 'HTTP Smuggling Guard',
+      sub: 'CRLF & TE.CL Desync',
+      status: 'ACTIVE',
+      infoTitle: 'Request Smuggling & CRLF',
+      infoDesc: t('simple_mode.smuggling'),
+      badge: 'NETWORK'
     }
   ];
 
@@ -500,7 +572,7 @@ export const Dashboard: React.FC = () => {
               </span>
               <InfoHint 
                 title="Global Gateway Security Mode" 
-                content="MONITOR: Passthrough with logging only. PROTECT (Recommended): Active scoped virtual patches and 7 attack shields enforce 403 blocks. STRICT: Aggressive threshold with ML anomaly blocking."
+                content="MONITOR: Passthrough with logging only. PROTECT (Recommended): Active scoped virtual patches and 20 attack shields enforce 403 blocks. STRICT: Aggressive threshold with ML anomaly blocking."
                 badge="WAF CONFIG"
               />
             </div>
@@ -593,7 +665,7 @@ export const Dashboard: React.FC = () => {
             <div className="flex items-center space-x-1.5">
               <InfoHint 
                 title="Intrusion Attempts Blocked" 
-                content="Number of malicious requests terminated with HTTP 403 Forbidden across all 7 attack modules and virtual patches in the past 24 hours."
+                content="Number of malicious requests terminated with HTTP 403 Forbidden across all 20 attack modules and virtual patches in the past 24 hours."
                 badge="TELEMETRY"
               />
               <div className="w-7 h-7 rounded-xl bg-copper-500/20 flex items-center justify-center text-copper-400 border border-copper-500/30">
@@ -730,15 +802,15 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Two Column Grid: 7 Attack-Specific Shields & Autonomous Agent */}
+      {/* Two Column Grid: 20 Attack-Specific Shields & Autonomous Agent */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2 Cols): 7 Attack Defense Modules */}
+        {/* Left Column (2 Cols): 20 Attack Defense Modules */}
         <div className="lg:col-span-2 p-6 rounded-3xl glass-panel border border-cyanteal-500/30 shadow-xl space-y-4">
           <div className="flex items-center justify-between border-b border-cyanteal-500/20 pb-3">
             <div className="flex items-center space-x-2">
               <Flame className="w-4 h-4 text-copper-400" />
               <h3 className="text-sm font-bold text-cream-300 font-sans">
-                {t('nav.attackModules')} (7 Active Defense Shields)
+                {t('nav.attackModules')} (20 Active Defense Shields)
               </h3>
               <InfoHint 
                 title="Attack-Specific Defense Engines"
