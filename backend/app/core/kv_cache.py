@@ -42,13 +42,23 @@ class MicrosecondKVCache:
         return False
 
     # --- Blacklist & Banned CIDRs ---
-    async def ban_ip(self, ip: str, duration_seconds: float = 3600):
-        """Ban an IP for a specific duration in memory."""
+    async def ban_ip(self, ip: str, duration_seconds: float = 3600, reason: str = "Hostile Exploit"):
+        """Ban an IP for a specific duration in memory and sync with OS Kernel."""
         self._banned_ips[ip] = time.time() + duration_seconds
+        try:
+            from app.network.kernel_filter import kernel_firewall
+            kernel_firewall.inject_kernel_drop(ip, reason)
+        except Exception:
+            pass
 
     async def unban_ip(self, ip: str):
         if ip in self._banned_ips:
             del self._banned_ips[ip]
+        try:
+            from app.network.kernel_filter import kernel_firewall
+            kernel_firewall.remove_kernel_drop(ip)
+        except Exception:
+            pass
 
     def add_banned_cidr(self, cidr_str: str):
         """Add a CIDR range to immediate drop list."""

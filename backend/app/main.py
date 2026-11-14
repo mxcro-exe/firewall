@@ -155,6 +155,24 @@ async def health_check():
         "mode": "ACTIVE_PROTECTION"
     }
 
+# OS Kernel Firewall Status & Control
+@app.get(f"{settings.API_V1_STR}/kernel/status", tags=["Kernel"])
+async def get_kernel_firewall_status():
+    from app.network.kernel_filter import kernel_firewall
+    return kernel_firewall.get_status()
+
+@app.post(f"{settings.API_V1_STR}/kernel/ban", tags=["Kernel"])
+async def ban_ip_in_kernel(ip: str, reason: str = "Manual Admin Block"):
+    from app.core.kv_cache import kv_cache
+    await kv_cache.ban_ip(ip, reason=reason)
+    return {"status": "SUCCESS", "message": f"IP {ip} banned in kernel and memory cache"}
+
+@app.post(f"{settings.API_V1_STR}/kernel/unban", tags=["Kernel"])
+async def unban_ip_in_kernel(ip: str):
+    from app.core.kv_cache import kv_cache
+    await kv_cache.unban_ip(ip)
+    return {"status": "SUCCESS", "message": f"IP {ip} unbanned from kernel"}
+
 # Reverse Proxy Entry Points
 @app.api_route("/proxy/{site_id}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
 async def proxy_by_site_id(request: Request, site_id: str, path: str = ""):
