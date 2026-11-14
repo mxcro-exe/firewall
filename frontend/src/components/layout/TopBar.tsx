@@ -21,6 +21,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
   
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
 
   // Global Ctrl+K shortcut listener
   useEffect(() => {
@@ -110,15 +111,48 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
           <span>{dashboardMode === 'simple' ? 'Simple' : 'Advanced'}</span>
         </button>
 
-        {/* Language Switch */}
+        {/* Language Switcher Dropdown */}
         <div className="relative">
           <button
-            onClick={() => setLanguage(language === 'en' ? 'ta' : 'en')}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+            onClick={() => setShowLangMenu(!showLangMenu)}
+            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+            title="Switch Language / மொழி / भाषा"
           >
             <Globe2 className="w-3.5 h-3.5 text-indigo-500" />
-            <span>{language === 'en' ? 'தமிழ்' : 'English'}</span>
+            <span>{language === 'en' ? 'English' : language === 'ta' ? 'தமிழ்' : 'हिन्दी'}</span>
           </button>
+
+          {showLangMenu && (
+            <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-1 z-50 text-xs">
+              <button
+                onClick={() => { setLanguage('en'); setShowLangMenu(false); }}
+                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                  language === 'en' ? 'text-brand-600 dark:text-brand-400 font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                <span>English</span>
+                {language === 'en' && <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
+              </button>
+              <button
+                onClick={() => { setLanguage('ta'); setShowLangMenu(false); }}
+                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                  language === 'ta' ? 'text-brand-600 dark:text-brand-400 font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                <span>தமிழ்</span>
+                {language === 'ta' && <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
+              </button>
+              <button
+                onClick={() => { setLanguage('hi'); setShowLangMenu(false); }}
+                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                  language === 'hi' ? 'text-brand-600 dark:text-brand-400 font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                <span>हिन्दी</span>
+                {language === 'hi' && <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Theme Toggle */}

@@ -11,8 +11,10 @@ class Alert(Base):
     severity = Column(String(20), default="MEDIUM", index=True)  # LOW, MEDIUM, HIGH, CRITICAL
     title_en = Column(String(255), nullable=False)
     title_ta = Column(String(255), nullable=False)
+    title_hi = Column(String(255), nullable=True)
     message_en = Column(Text, nullable=False)
     message_ta = Column(Text, nullable=False)
+    message_hi = Column(Text, nullable=True)
     channel = Column(String(30), default="IN_APP")  # TELEGRAM, EMAIL, WEBHOOK, IN_APP
     is_read = Column(Boolean, default=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)

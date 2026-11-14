@@ -12,7 +12,7 @@ from app.core.audit import log_audit
 from app.models.user import User
 from app.models.site import Site
 from app.schemas.auth import (
-    LoginRequest, Token, UserResponse, SetupWizardRequest, PasswordChangeRequest
+    LoginRequest, Token, UserResponse, SetupWizardRequest, PasswordChangeRequest, LanguageUpdateRequest
 )
 from app.schemas.settings import TotpSetupResponse, TotpVerifyRequest
 
@@ -59,6 +59,27 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+@router.get("/me/language")
+async def get_user_language(current_user: User = Depends(get_current_user)):
+    return {
+        "preferred_language": getattr(current_user, "preferred_language", "en") or "en",
+        "supported_languages": ["en", "ta", "hi"]
+    }
+
+@router.patch("/me/language")
+async def update_user_language(
+    req: LanguageUpdateRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    lang = req.language.lower().strip()
+    if lang not in ["en", "ta", "hi"]:
+        raise HTTPException(status_code=400, detail="Invalid language. Supported: en, ta, hi")
+    current_user.preferred_language = lang
+    await db.commit()
+    await log_audit(db, current_user.username, current_user.role, "LANGUAGE_UPDATED", "User", {"language": lang})
+    return {"status": "success", "preferred_language": lang}
 
 @router.post("/setup-wizard")
 async def complete_setup_wizard(

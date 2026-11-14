@@ -26,6 +26,9 @@ class PasswordChangeRequest(BaseModel):
     old_password: str
     new_password: str
 
+class LanguageUpdateRequest(BaseModel):
+    language: str
+
 class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -34,6 +37,7 @@ class UserResponse(BaseModel):
     email: Optional[str] = None
     role: str
     totp_enabled: bool
+    preferred_language: str = "en"
     is_active: bool
     is_first_run_completed: bool
     created_at: datetime

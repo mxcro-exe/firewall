@@ -164,13 +164,40 @@ python demo_lab/attack_simulator.py
 
 ---
 
-## 🌐 Bilingual Support (Tamil & English)
+## 🌐 Multilingual Support (English, Tamil, Hindi)
 
-PatchShield bridges the gap for Indian SMBs by providing full bilingual localization across the entire UI and alert feeds:
-* **Tamil UI:** Full Tamil interface designed for shopkeepers and small business owners (*"பேட்ச்ஷீல்ட்: வணிகங்களுக்கான AI மெய்நிகர் பாதுகாப்பு நுழைவாயில்"*).
-* **Plain Language Alerts:**
-  * **English:** *"Your billing page was attacked with SQL Injection. We blocked it safely."*
-  * **Tamil:** *"உங்கள் கட்டணப் பக்கத்தில் SQL Injection தாக்குதல் நடத்தப்பட்டது. பேட்ச்ஷீல்ட் அதைத் தடுத்து நிறுத்தியது."*
+PatchShield bridges the communication barrier for Indian SMBs by providing complete native localization across the UI dashboard, alert notifications (Telegram, Email, Webhooks, In-App), and executive reports:
+* **English (`en`):** Default interface and technical terminology.
+* **Tamil (`ta`):** Natural, merchant-friendly Tamil (*"பேட்ச்ஷீல்ட்: வணிகங்களுக்கான AI மெய்நிகர் பாதுகாப்பு நுழைவாயில்"*).
+* **Hindi (`hi`):** Clear, conversational Devanagari Hindi (*"पैचशील्ड: छोटे व्यवसायों के लिए AI वर्चुअल पैचिंग गेटवे"*).
+
+### Sample Alert in Each Language:
+* **English:** *"Blocked SQL Injection attack from 192.168.1.100 on endpoint /api/products. Your website is safe."*
+* **Tamil:** *"/api/products பக்கத்தில் 192.168.1.100 முகவரியிலிருந்து வந்த SQL Injection தாக்குதல் தடுக்கப்பட்டது. உங்கள் இணையதளம் பாதுகாப்பாக உள்ளது."*
+* **Hindi:** *"/api/products पर 192.168.1.100 से आए SQL Injection हमले को सुरक्षित रूप से रोक दिया गया है। आपकी वेबसाइट सुरक्षित है।"*
+
+---
+
+## 🌍 How to Add a New Language
+
+PatchShield's catalog architecture makes adding a new regional language (e.g., Telugu, Bengali, Kannada) straightforward and fully offline:
+
+1. **Create Catalog File:**
+   Copy `locales/en.json` to `locales/<lang_code>.json` (e.g. `locales/te.json` for Telugu). Translate all values while preserving the JSON keys.
+2. **Register Supported Code:**
+   In `backend/app/core/i18n.py`, add `<lang_code>` to `SUPPORTED_LANGUAGES`:
+   ```python
+   SUPPORTED_LANGUAGES = ["en", "ta", "hi", "te"]
+   ```
+3. **Embed TrueType Font (for non-Latin scripts):**
+   Place the corresponding Google Noto Sans font in `data/fonts/` (e.g. `NotoSansTelugu-Regular.ttf`) and register it in `backend/app/reporting/pdf_generator.py`.
+4. **Register in Frontend:**
+   Add the locale to `frontend/src/context/LanguageContext.tsx` and the TopBar dropdown selector in `frontend/src/components/layout/TopBar.tsx`.
+5. **Verify with Tests:**
+   Run the automated multilingual test suite:
+   ```bash
+   python -m pytest backend/tests/test_multilingual.py -v
+   ```
 
 ---
 

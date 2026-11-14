@@ -14,6 +14,7 @@ class Site(Base):
     security_mode = Column(String(20), default="PROTECT", nullable=False)  # MONITOR, PROTECT, STRICT
     health_score = Column(Integer, default=85)
     bypass_detected = Column(Boolean, default=False)
+    preferred_language = Column(String(10), default="en", nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

@@ -14,6 +14,7 @@ class User(Base):
     role = Column(String(20), default="ADMIN", nullable=False)  # ADMIN, ANALYST, VIEWER
     totp_secret = Column(String(64), nullable=True)
     totp_enabled = Column(Boolean, default=False)
+    preferred_language = Column(String(10), default="en", nullable=False)
     is_active = Column(Boolean, default=True)
     is_first_run_completed = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)

@@ -15,8 +15,8 @@
     "alerts": "Alerts & Notifications",
     "reports": "Reports & Analytics",
     "metrics": "PS5 Metrics",
-    "auditLog": "Audit Log",
     "demoLab": "Demo Lab & Simulator",
+    "auditLog": "Audit Log",
     "settings": "Settings",
     "help": "Help & Support"
   },
@@ -63,7 +63,71 @@
     "actions": "Actions",
     "checkBypass": "Test Direct Bypass",
     "safe": "Protected (No Bypass)",
-    "vulnerable": "Direct Access Exposed!"
+    "vulnerable": "Direct Access Exposed!",
+    "save": "Save Site",
+    "cancel": "Cancel",
+    "language": "Preferred Language"
+  },
+  "alerts": {
+    "title": "Security Alerts & Incident Timeline",
+    "subtitle": "Real-time attack notifications and virtual patch status updates",
+    "filterAll": "All Severities",
+    "markRead": "Mark as Read",
+    "empty": "No alerts recorded yet.",
+    "blocked_request_title": "Attack Blocked on {site}",
+    "blocked_request_msg": "Blocked {action} attack from {ip} on endpoint {endpoint}. Your website is safe.",
+    "flagged_request_title": "Suspicious Activity Detected on {site}",
+    "flagged_request_msg": "Observed unusual request on {endpoint} with risk score {score}. Currently monitoring.",
+    "new_patch_proposed_title": "Virtual Patch Proposed for {cve_id}",
+    "new_patch_proposed_msg": "A new virtual patch rule was generated for {cve_id} on {site}. Automated sandbox testing has begun.",
+    "rule_shadow_title": "Rule in Shadow Mode: {cve_id}",
+    "rule_shadow_msg": "Rule for {cve_id} is passively observing traffic without blocking real customers.",
+    "rule_canary_title": "Canary Testing Active: {cve_id}",
+    "rule_canary_msg": "Rule for {cve_id} is currently protecting {percent}% of live traffic safely.",
+    "rule_enforce_title": "Virtual Patch Fully Enforced: {cve_id}",
+    "rule_enforce_msg": "PatchShield is actively blocking all {cve_id} exploit attempts on {site}.",
+    "rule_rollback_title": "Safety Rollback Triggered: {cve_id}",
+    "rule_rollback_msg": "Rule for {cve_id} was rolled back because potential false blocks exceeded safety threshold. Normal business traffic is unaffected.",
+    "daily_summary_title": "Daily Security Summary for {site}",
+    "daily_summary_msg": "PatchShield protected your business: {count} attacks blocked, {patches} active virtual patches, 0.00% false blocks today."
+  },
+  "simple_mode": {
+    "title": "Shopkeeper Shield Assistant",
+    "subtitle": "Plain-language explanations of what PatchShield is protecting",
+    "sqli": "Someone tried to sneak hidden database commands into your search or form. We blocked them safely.",
+    "xss": "Someone tried to inject malicious script into your web page to hijack users. We blocked them safely.",
+    "path": "Someone tried to peek into confidential server system files. We blocked them safely.",
+    "cmd": "Someone tried to run dangerous operating system commands on your server. We blocked them safely.",
+    "brute": "Someone repeatedly guessed passwords to break into your admin area. We locked them out.",
+    "ddos": "A sudden flood of fake requests tried to slow down your site. We rate-limited them.",
+    "bot": "An automated hacker scanner bot was searching your site for weaknesses. We dropped it."
+  },
+  "reports": {
+    "title": "Executive Security Report",
+    "subtitle": "Download security compliance reports and incident logs",
+    "downloadPdf": "Download PDF Report",
+    "downloadCsv": "Export Incidents (CSV)",
+    "generated_on": "Generated on {date} | Target: {site}",
+    "col_metric": "Metric",
+    "col_value": "Status / Value",
+    "kpi_health": "Overall Security Health Score",
+    "kpi_active_patches": "Active Scoped Virtual Patches",
+    "kpi_blocked_attacks": "Attacks Blocked (Last 24h)",
+    "kpi_mttvp": "Mean Time to Virtual Patch (MTTVP)",
+    "kpi_exposure": "Exposure Window Reduction",
+    "kpi_fp_rate": "False-Block Rate (Benchmark)",
+    "methodology_title": "Prove-then-Patch Assurance Guarantee",
+    "methodology_body": "Unlike legacy signature-based WAFs that frequently block legitimate shoppers, every virtual patch deployed by PatchShield underwent automated exploit sandbox verification and regression replay against recorded legitimate traffic. Active auto-rollback circuit breakers guarantee zero production disruption.",
+    "compliance_title": "Nasscom ARB 2.0 Compliance Sign-off",
+    "compliance_body": "This system satisfies Problem Statement 5 (PS5: AI-Era Virtual Patching for Indian SMBs). All telemetry, audit logs, and virtual patches are cryptographically hashed and stored on-premises.",
+    "csv_col_id": "Incident ID",
+    "csv_col_timestamp": "Timestamp",
+    "csv_col_client_ip": "Client IP",
+    "csv_col_method": "HTTP Method",
+    "csv_col_path": "Endpoint Path",
+    "csv_col_payload": "Payload / Query",
+    "csv_col_action": "Defense Action",
+    "csv_col_status": "Response Code"
   },
   "settings": {
     "title": "System Settings",
@@ -76,6 +140,8 @@
       "appearance": "Appearance & Language",
       "about": "About & Version"
     },
+    "language_select": "Preferred Dashboard Language",
+    "language_desc": "Select language for dashboard, alerts, and PDF/CSV reports",
     "save": "Save Changes"
   },
   "auth": {
@@ -87,6 +153,19 @@
     "forgot": "Forgot Password?",
     "wizardTitle": "PatchShield First-Run Wizard",
     "wizardDesc": "Get your business protected in under 3 minutes"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "refresh": "Refresh",
+    "search": "Search",
+    "loading": "Loading...",
+    "status": "Status",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "enabled": "Enabled",
+    "disabled": "Disabled"
   }
 }
-

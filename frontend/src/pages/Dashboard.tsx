@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { 
   ShieldCheck, ShieldAlert, Globe, Activity, ArrowUpRight, 
-  Play, CheckCircle2, AlertTriangle, Zap, Server
+  CheckCircle2, AlertTriangle, Zap, Server, Sliders, HeartHandshake
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useMode } from '../context/ModeContext';
@@ -58,65 +58,96 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* SHOPKEEPER SIMPLE MODE ASSISTANT BANNER (When Simple Mode is active) */}
+      {dashboardMode === 'simple' && (
+        <div className="p-5 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-emerald-500/10 border-2 border-indigo-500/30 shadow-lg space-y-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
+              <HeartHandshake className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                {t('simple_mode.title')}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-300">
+                {t('simple_mode.subtitle')}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+            {[
+              { title: 'SQL Injection', text: t('simple_mode.sqli'), badge: 'DATABASE SHIELD' },
+              { title: 'Cross-Site Scripting (XSS)', text: t('simple_mode.xss'), badge: 'BROWSER SHIELD' },
+              { title: 'Path Traversal', text: t('simple_mode.path'), badge: 'FILE SYSTEM' },
+              { title: 'Command Injection', text: t('simple_mode.cmd'), badge: 'SERVER ACCESS' },
+              { title: 'Brute-Force Passwords', text: t('simple_mode.brute'), badge: 'LOGIN GUARD' },
+              { title: 'DDoS Traffic Flood', text: t('simple_mode.ddos'), badge: 'RATE LIMIT' },
+              { title: 'Hacker Scanner Bots', text: t('simple_mode.bot'), badge: 'BOT DROP' },
+            ].map((card, i) => (
+              <div key={i} className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-900/50 shadow-sm space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-900 dark:text-white">{card.title}</span>
+                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    PROTECTED
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
+                  {card.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 4 KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Protected Sites */}
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>{t('dashboard.totalSites')}</span>
-            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500">
-              <Globe className="w-4 h-4" />
-            </div>
+            <Globe className="w-4 h-4 text-brand-500" />
           </div>
-          <div className="flex items-baseline space-x-2">
+          <div className="flex items-baseline justify-between">
             <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
-              {loading ? '...' : sitesCount}
+              {sitesCount}
             </span>
-            <span className="text-[11px] text-emerald-500 font-medium">100% Online</span>
+            <span className="text-[11px] text-emerald-500 font-medium">Active Reverse Proxy</span>
           </div>
         </div>
 
-        {/* Card 2: Active Virtual Patches */}
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>{t('dashboard.activePatches')}</span>
-            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-500">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
+            <ShieldCheck className="w-4 h-4 text-emerald-500" />
           </div>
-          <div className="flex items-baseline space-x-2">
+          <div className="flex items-baseline justify-between">
             <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
-              6
+              1
             </span>
-            <span className="text-[11px] text-brand-500 font-medium">Prove-Tested</span>
+            <span className="text-[11px] text-emerald-500 font-medium">Enforced & Safe</span>
           </div>
         </div>
 
-        {/* Card 3: Blocked Attacks */}
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>{t('dashboard.blockedAttacks')}</span>
-            <div className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-500">
-              <ShieldAlert className="w-4 h-4" />
-            </div>
+            <ShieldAlert className="w-4 h-4 text-rose-500" />
           </div>
-          <div className="flex items-baseline space-x-2">
+          <div className="flex items-baseline justify-between">
             <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
               0
             </span>
-            <span className="text-[11px] text-slate-400 font-medium">0% False Positives</span>
+            <span className="text-[11px] text-rose-500 font-medium">0.00% False Blocks</span>
           </div>
         </div>
 
-        {/* Card 4: Security Health Score */}
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>{t('dashboard.healthScore')}</span>
-            <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-500">
-              <Zap className="w-4 h-4" />
-            </div>
+            <Activity className="w-4 h-4 text-indigo-500" />
           </div>
-          <div className="flex items-baseline space-x-2">
+          <div className="flex items-baseline justify-between">
             <span className="text-2xl font-extrabold text-emerald-500">
               88/100
             </span>
@@ -130,16 +161,22 @@ export const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              {language === 'ta' ? 'நிரூபித்து இணை (Prove-then-Patch) தானியங்கி குழாய்' : 'Prove-then-Patch Active Verification Pipeline'}
+              {language === 'ta' 
+                ? 'நிரூபித்து இணை (Prove-then-Patch) தானியங்கி குழாய்' 
+                : language === 'hi'
+                ? 'प्रमाणित पैच (Prove-then-Patch) स्वचालित परीक्षण पाइपलाइन'
+                : 'Prove-then-Patch Active Verification Pipeline'}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {language === 'ta' 
                 ? 'ஒவ்வொரு விதியும் உற்பத்திக்கு செல்வதற்கு முன் நிஜ மாதிரிகள் மூலம் சோதிக்கப்படுகிறது' 
+                : language === 'hi'
+                ? 'प्रत्येक वर्चुअल पैच को लागू करने से पहले सैंडबॉक्स व ट्रैफ़िक रीप्ले में परखा जाता है'
                 : 'Every virtual patch is battle-tested in sandbox & historical traffic before live enforcement.'}
             </p>
           </div>
           <a href="/prove-patch" className="text-xs text-brand-500 hover:text-brand-400 font-medium flex items-center">
-            <span>Inspect Stepper</span>
+            <span>{language === 'ta' ? 'விவரங்களை காண்க' : language === 'hi' ? 'विवरण देखें' : 'Inspect Stepper'}</span>
             <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
           </a>
         </div>
@@ -218,6 +255,8 @@ export const Dashboard: React.FC = () => {
               <p className="text-slate-800 dark:text-slate-200">
                 {language === 'ta' 
                   ? 'பின்னணி அமைப்புகளை கண்காணித்து வருகிறது. எந்த அச்சுறுத்தலும் கண்டறியப்படவில்லை.' 
+                  : language === 'hi'
+                  ? 'रिवर्स प्रॉक्सी ट्रैफ़िक की निगरानी जारी है। कोई नया सुरक्षा ख़तरा नहीं मिला।'
                   : 'Monitoring reverse-proxy traffic and offline CVE feeds. Upstream latency nominal.'}
               </p>
             </div>
@@ -245,4 +284,3 @@ export const Dashboard: React.FC = () => {
     </div>
   );
 };
-

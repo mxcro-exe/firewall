@@ -10,6 +10,7 @@ from app.core.audit import log_audit
 from app.models.site import Site
 from app.models.user import User
 from app.schemas.site import SiteCreate, SiteUpdate, SiteResponse, SiteModeToggle
+from app.schemas.auth import LanguageUpdateRequest
 
 router = APIRouter(prefix="/sites", tags=["Sites"])
 
@@ -99,6 +100,31 @@ async def toggle_site_mode(
         "site_id": site.id,
         "old_mode": old_mode,
         "new_mode": site.security_mode
+    })
+    return site
+
+@router.patch("/{site_id}/language", response_model=SiteResponse)
+async def update_site_language(
+    site_id: str,
+    req: LanguageUpdateRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_role(["ADMIN", "ANALYST"]))
+):
+    lang = req.language.lower().strip()
+    if lang not in ["en", "ta", "hi"]:
+        raise HTTPException(status_code=400, detail="Invalid language. Supported: en, ta, hi")
+
+    result = await db.execute(select(Site).where(Site.id == site_id))
+    site = result.scalars().first()
+    if not site:
+        raise HTTPException(status_code=404, detail="Site not found")
+
+    site.preferred_language = lang
+    await db.commit()
+    await db.refresh(site)
+    await log_audit(db, current_user.username, current_user.role, "SITE_LANGUAGE_CHANGED", "Site", {
+        "site_id": site.id,
+        "language": lang
     })
     return site
 

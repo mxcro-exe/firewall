@@ -34,3 +34,17 @@ async def init_db():
         )
         await conn.run_sync(Base.metadata.create_all)
 
+        # Safe schema migration for new columns
+        from sqlalchemy import text
+        migration_statements = [
+            "ALTER TABLE users ADD COLUMN preferred_language VARCHAR(10) DEFAULT 'en'",
+            "ALTER TABLE sites ADD COLUMN preferred_language VARCHAR(10) DEFAULT 'en'",
+            "ALTER TABLE alerts ADD COLUMN title_hi VARCHAR(255)",
+            "ALTER TABLE alerts ADD COLUMN message_hi TEXT"
+        ]
+        for stmt in migration_statements:
+            try:
+                await conn.execute(text(stmt))
+            except Exception:
+                pass  # Column already exists
+

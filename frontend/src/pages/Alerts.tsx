@@ -9,8 +9,10 @@ interface AlertItem {
   severity: string;
   title_en: string;
   title_ta: string;
+  title_hi?: string;
   message_en: string;
   message_ta: string;
+  message_hi?: string;
   channel: string;
   is_read: boolean;
   created_at: string;
@@ -48,16 +50,28 @@ export const Alerts: React.FC = () => {
     }
   };
 
+  const getAlertTitle = (al: AlertItem) => {
+    if (language === 'ta') return al.title_ta || al.title_en;
+    if (language === 'hi') return al.title_hi || al.title_en;
+    return al.title_en;
+  };
+
+  const getAlertMessage = (al: AlertItem) => {
+    if (language === 'ta') return al.message_ta || al.message_en;
+    if (language === 'hi') return al.message_hi || al.message_en;
+    return al.message_en;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-            {t('nav.alerts')} & Mobile Notifications
+            {t('alerts.title')}
           </h2>
           <p className="text-xs text-slate-500">
-            Jargon-free alerts delivered across Telegram, Email, and In-App in Tamil & English.
+            {t('alerts.subtitle')}
           </p>
         </div>
 
@@ -68,7 +82,7 @@ export const Alerts: React.FC = () => {
             onChange={(e) => setUnreadOnly(e.target.checked)}
             className="rounded text-brand-600 focus:ring-brand-500"
           />
-          <span>Show Unread Only</span>
+          <span>{language === 'ta' ? 'படிக்காதவை மட்டும்' : language === 'hi' ? 'केवल न पढ़े गए' : 'Show Unread Only'}</span>
         </label>
       </div>
 
@@ -79,26 +93,36 @@ export const Alerts: React.FC = () => {
             <Send className="w-4 h-4" />
           </div>
           <div>
-            <p className="font-bold text-slate-900 dark:text-white">Telegram Alerts Dispatcher</p>
-            <p className="text-slate-500">Instant mobile push alerts for shopkeepers whenever an attack is repelled.</p>
+            <p className="font-bold text-slate-900 dark:text-white">
+              {language === 'ta' ? 'டெலிகிராம் நேரலை அறிவிப்பான்' : language === 'hi' ? 'टेलीग्राम लाइव अलर्ट प्रेषक' : 'Telegram Alerts Dispatcher'}
+            </p>
+            <p className="text-slate-500">
+              {language === 'ta' 
+                ? 'தாக்குதல் முறியடிக்கப்படும் போது வணிகர்களுக்கு உடனடி மொபைல் அறிவிப்பு அனுப்பப்படுகிறது.'
+                : language === 'hi'
+                ? 'हमले को विफल किए जाने पर व्यवसायियों को तुरंत मोबाइल सूचना भेजी जाती है।'
+                : 'Instant mobile push alerts for shopkeepers whenever an attack is repelled in Tamil, Hindi & English.'}
+            </p>
           </div>
         </div>
         <a
           href="/settings"
           className="text-xs text-brand-500 hover:text-brand-400 font-semibold flex items-center"
         >
-          Configure Telegram Bot in Settings &rarr;
+          {language === 'ta' ? 'அமைப்புகளில் டெலிகிராம் இணைக்கவும் →' : language === 'hi' ? 'सेटिंग्स में टेलीग्राम कॉन्फ़िगर करें →' : 'Configure Telegram in Settings →'}
         </a>
       </div>
 
       {/* Alerts Stream */}
       {loading ? (
-        <div className="p-8 text-center text-xs text-slate-500">Loading alerts...</div>
+        <div className="p-8 text-center text-xs text-slate-500">{t('common.loading')}</div>
       ) : alerts.length === 0 ? (
         <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
           <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
-          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">All Systems Secure</h3>
-          <p className="text-xs text-slate-500">No security alerts or unpatched attacks detected.</p>
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+            {language === 'ta' ? 'அனைத்து அமைப்புகளும் பாதுகாப்பாக உள்ளன' : language === 'hi' ? 'सभी प्रणालियाँ सुरक्षित हैं' : 'All Systems Secure'}
+          </h3>
+          <p className="text-xs text-slate-500">{t('alerts.empty')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -124,7 +148,7 @@ export const Alerts: React.FC = () => {
                   </span>
 
                   <span className="font-bold text-sm text-slate-900 dark:text-white">
-                    {language === 'ta' ? al.title_ta : al.title_en}
+                    {getAlertTitle(al)}
                   </span>
                 </div>
 
@@ -136,23 +160,15 @@ export const Alerts: React.FC = () => {
                       className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition"
                     >
                       <Check className="w-3 h-3" />
-                      <span>Mark Read</span>
+                      <span>{t('alerts.markRead')}</span>
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Message side by side */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">English:</span>
-                  <p>{al.message_en}</p>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200">
-                  <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block mb-1">தமிழ்:</span>
-                  <p>{al.message_ta}</p>
-                </div>
+              {/* Actionable Explanation */}
+              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+                {getAlertMessage(al)}
               </div>
             </div>
           ))}
