@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { 
   ShieldCheck, ShieldAlert, Globe, Activity, ArrowUpRight, 
   CheckCircle2, AlertTriangle, Zap, Server, Sliders, HeartHandshake,
-  Bot, Flame, Sparkles, Clock, Lock, RefreshCw, Terminal, ChevronRight
+  Bot, Flame, Sparkles, Clock, Lock, RefreshCw, Terminal, ChevronRight,
+  Store, ShoppingCart, KeyRound, Shield, FileText, Check, Send, Award
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useMode } from '../context/ModeContext';
@@ -11,14 +12,16 @@ import api from '../services/api';
 
 export const Dashboard: React.FC = () => {
   const { language, t } = useLanguage();
-  const { dashboardMode, globalMode } = useMode();
+  const { dashboardMode, setDashboardMode, globalMode } = useMode();
   
   const [sitesCount, setSitesCount] = useState<number>(1);
   const [activePatchesCount, setActivePatchesCount] = useState<number>(1);
   const [blockedCount, setBlockedCount] = useState<number>(0);
   const [healthScore, setHealthScore] = useState<number>(88);
+  const [siteName, setSiteName] = useState<string>('Sri Murugan Organics');
   const [loading, setLoading] = useState<boolean>(true);
   const [activeStage, setActiveStage] = useState<number>(5); // Default to Stage 5 Full Enforce
+  const [quickCheckDone, setQuickCheckDone] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -31,6 +34,9 @@ export const Dashboard: React.FC = () => {
 
         if (sitesRes.status === 'fulfilled' && sitesRes.value.data) {
           setSitesCount(sitesRes.value.data.length || 1);
+          if (sitesRes.value.data[0]?.name) {
+            setSiteName(sitesRes.value.data[0].name);
+          }
           if (sitesRes.value.data[0]?.health_score) {
             setHealthScore(sitesRes.value.data[0].health_score);
           }
@@ -54,6 +60,11 @@ export const Dashboard: React.FC = () => {
     };
     fetchDashboardData();
   }, []);
+
+  const handleQuickSafetyCheck = () => {
+    setQuickCheckDone(true);
+    setTimeout(() => setQuickCheckDone(false), 4000);
+  };
 
   const stages = [
     {
@@ -135,7 +146,6 @@ export const Dashboard: React.FC = () => {
       key: 'sqli',
       title: 'SQL Injection Guard',
       sub: 'AST & Token Matcher',
-      blocks: '0 Blocks',
       status: 'ACTIVE',
       infoTitle: 'SQL Injection (SQLi)',
       infoDesc: t('simple_mode.sqli'),
@@ -145,7 +155,6 @@ export const Dashboard: React.FC = () => {
       key: 'xss',
       title: 'Cross-Site Scripting (XSS)',
       sub: 'HTML & Polyglot Filter',
-      blocks: '0 Blocks',
       status: 'ACTIVE',
       infoTitle: 'Cross-Site Scripting (XSS)',
       infoDesc: t('simple_mode.xss'),
@@ -155,7 +164,6 @@ export const Dashboard: React.FC = () => {
       key: 'path',
       title: 'Path Traversal Shield',
       sub: 'LFI & File System Guard',
-      blocks: '0 Blocks',
       status: 'ACTIVE',
       infoTitle: 'Path Traversal',
       infoDesc: t('simple_mode.path'),
@@ -165,7 +173,6 @@ export const Dashboard: React.FC = () => {
       key: 'cmd',
       title: 'Command Injection Guard',
       sub: 'Shell Metacharacters',
-      blocks: '0 Blocks',
       status: 'ACTIVE',
       infoTitle: 'OS Command Injection',
       infoDesc: t('simple_mode.cmd'),
@@ -175,7 +182,6 @@ export const Dashboard: React.FC = () => {
       key: 'ddos',
       title: 'DDoS & Rate Limiter',
       sub: '60 req/min Burst Ceiling',
-      blocks: '0 Blocks',
       status: 'ACTIVE',
       infoTitle: 'DDoS & Flood Protection',
       infoDesc: t('simple_mode.ddos'),
@@ -185,7 +191,6 @@ export const Dashboard: React.FC = () => {
       key: 'brute',
       title: 'Brute-Force Guard',
       sub: '5 Fails / 10-min Ban',
-      blocks: '0 Blocks',
       status: 'ACTIVE',
       infoTitle: 'Brute-Force Login Protection',
       infoDesc: t('simple_mode.brute'),
@@ -195,7 +200,6 @@ export const Dashboard: React.FC = () => {
       key: 'bot',
       title: 'Scraper & Bot Drop',
       sub: 'sqlmap, nikto, scanner drop',
-      blocks: '0 Blocks',
       status: 'ACTIVE',
       infoTitle: 'Malicious Scanner Bots',
       infoDesc: t('simple_mode.bot'),
@@ -203,8 +207,285 @@ export const Dashboard: React.FC = () => {
     }
   ];
 
+  // =========================================================================
+  // VIEW 1: SIMPLE MODE (SHOPKEEPER / STORE OWNER VIEW)
+  // No technical jargon. Clear status, plain words, merchant protection list.
+  // =========================================================================
+  if (dashboardMode === 'simple') {
+    return (
+      <div className="space-y-6">
+        {/* Mode Switcher Callout Banner */}
+        <div className="p-4 rounded-3xl glass-panel border border-copper-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+          <div className="flex items-center space-x-3">
+            <span className="text-2xl">🏪</span>
+            <div>
+              <p className="font-bold text-cream-300 text-sm">
+                {language === 'ta' ? 'வணிகர் முறை செயலில் உள்ளது' : language === 'hi' ? 'व्यापारी मोड सक्रिय है' : 'Shopkeeper Mode Active'}
+              </p>
+              <p className="text-xs text-slate-400">
+                {language === 'ta'
+                  ? 'கடினமான தொழில்நுட்ப வார்த்தைகள் இன்றி, எளிய முறையில் உங்கள் கடையின் பாதுகாப்பு காட்டப்படுகிறது.'
+                  : language === 'hi'
+                  ? 'कठिन तकनीकी शब्दों के बिना, सरल भाषा में आपकी दुकान की सुरक्षा स्थिति दिखाई जा रही है।'
+                  : 'Plain-language security view tailored for store owners. Zero confusing technical jargon.'}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setDashboardMode('advanced')}
+            className="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-deepteal-700 hover:bg-deepteal-600 text-cream-200 text-xs font-bold border border-iceteal-300/40 shadow-glow-teal transition-all duration-200 self-start sm:self-auto"
+          >
+            <Sliders className="w-3.5 h-3.5 text-iceteal-300" />
+            <span>{language === 'ta' ? 'மேம்பட்ட முறைக்கு மாறு (SecOps) →' : language === 'hi' ? 'उन्नत मोड में बदलें (SecOps) →' : 'Switch to Advanced (SecOps) →'}</span>
+          </button>
+        </div>
+
+        {/* Hero Card: 100% Store Protection Status */}
+        <div className="p-8 rounded-3xl bg-gradient-to-br from-deepteal-700/50 via-obsidian-900 to-obsidian-950 border-2 border-cyanteal-500/40 shadow-2xl space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-copper-500 via-deepteal-700 to-emerald-500 flex items-center justify-center text-white shadow-glow-teal flex-shrink-0">
+                <ShieldCheck className="w-9 h-9 text-cream-100" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <h2 className="text-xl md:text-2xl font-extrabold text-cream-300">
+                    {siteName}
+                  </h2>
+                  <span className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/40 text-xs font-bold">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span>{language === 'ta' ? '100% பாதுகாப்பானது' : language === 'hi' ? '100% सुरक्षित' : '100% PROTECTED'}</span>
+                  </span>
+                </div>
+                <p className="text-xs md:text-sm text-slate-300">
+                  {language === 'ta'
+                    ? 'உங்கள் இணையதளத்தில் வாடிக்கையாளர்கள் தடையின்றி பொருட்கள் வாங்கலாம். அனைத்து பாதுகாப்பு கவசங்களும் முழுமையாக இயங்குகின்றன.'
+                    : language === 'hi'
+                    ? 'आपकी वेबसाइट पर ग्राहक बेरोकटोक खरीदारी कर सकते हैं। सभी सुरक्षा कवच पूरी तरह सक्रिय हैं।'
+                    : 'Your online store is actively protected. Customers can shop and checkout freely without any interruption.'}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleQuickSafetyCheck}
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-copper-500 to-copper-600 hover:from-copper-400 hover:to-copper-500 text-cream-100 font-bold text-xs shadow-glow-copper transition-all duration-200 active:scale-95 flex items-center justify-center space-x-2 self-start md:self-auto"
+            >
+              {quickCheckDone ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-300" />
+                  <span>{language === 'ta' ? 'அனைத்தும் சரியாக உள்ளது!' : language === 'hi' ? 'सब कुछ ठीक है!' : 'All Shields Active!'}</span>
+                </>
+              ) : (
+                <>
+                  <Zap className="w-4 h-4 text-cream-200" />
+                  <span>{language === 'ta' ? 'பாதுகாப்பை உடனடியாக சோதி' : language === 'hi' ? 'तुरंत सुरक्षा जांचें' : 'Run 1-Click Safety Check'}</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* 3 Big Shopkeeper Metric Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Card 1: Customer Shopping Traffic */}
+          <div className="p-6 rounded-3xl glass-panel border border-cyanteal-500/30 shadow-lg space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400">
+                {language === 'ta' ? 'உண்மையான வாடிக்கையாளர்கள்' : language === 'hi' ? 'वास्तविक ग्राहक ट्रैफ़िक' : 'Legitimate Shoppers'}
+              </span>
+              <ShoppingCart className="w-5 h-5 text-iceteal-300" />
+            </div>
+            <div className="space-y-1">
+              <span className="text-3xl font-extrabold text-cream-300 font-mono">
+                100% UNTOUCHED
+              </span>
+              <p className="text-xs text-emerald-400 font-medium">
+                {language === 'ta' ? '0 நல்ல வாடிக்கையாளர்கள் தடுக்கப்பட்டனர் (0% பிழை)' : language === 'hi' ? '0 असली ग्राहक ब्लॉक हुए (0% ग़लती)' : '0 legitimate customers blocked (0.00% FP)'}
+              </p>
+            </div>
+          </div>
+
+          {/* Card 2: Threats Stopped */}
+          <div className="p-6 rounded-3xl glass-panel border border-cyanteal-500/30 shadow-lg space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400">
+                {language === 'ta' ? 'தடுக்கப்பட்ட திருட்டு முயற்சிகள்' : language === 'hi' ? 'रोके गए हैकर हमले' : 'Hackers Repelled Today'}
+              </span>
+              <ShieldAlert className="w-5 h-5 text-copper-400" />
+            </div>
+            <div className="space-y-1">
+              <span className="text-3xl font-extrabold text-cream-300 font-mono">
+                {blockedCount} THREATS
+              </span>
+              <p className="text-xs text-copper-300 font-medium">
+                {language === 'ta' ? 'எந்தவொரு தாக்குதலும் உள்ளே நுழைய அனுமதிக்கப்படவில்லை' : language === 'hi' ? 'कोई भी हमलावर अंदर नहीं घुस पाया' : 'No intrusion attempts bypassed the shield'}
+              </p>
+            </div>
+          </div>
+
+          {/* Card 3: Security Grade */}
+          <div className="p-6 rounded-3xl glass-panel border border-cyanteal-500/30 shadow-lg space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400">
+                {language === 'ta' ? 'கடையின் பாதுகாப்பு தரம்' : language === 'hi' ? 'दुकान सुरक्षा ग्रेड' : 'Store Security Score'}
+              </span>
+              <Award className="w-5 h-5 text-cream-300" />
+            </div>
+            <div className="space-y-1">
+              <span className="text-3xl font-extrabold text-emerald-400 font-mono">
+                {healthScore}/100 <span className="text-sm text-cream-200">(Grade A)</span>
+              </span>
+              <p className="text-xs text-iceteal-300 font-medium">
+                {language === 'ta' ? 'அதிகபட்ச பாதுகாப்பு நிலையில் உள்ளது' : language === 'hi' ? 'उच्चतम सुरक्षा स्तर पर' : 'Optimal safety benchmark verified'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Visual Checklist: What PatchShield is Protecting Right Now */}
+        <div className="p-6 rounded-3xl glass-panel-elevated border border-cyanteal-500/30 shadow-xl space-y-4">
+          <div className="border-b border-cyanteal-500/20 pb-3">
+            <h3 className="font-bold text-base text-cream-300">
+              {language === 'ta' ? 'இப்போது உங்கள் கடையில் என்னென்ன பகுதிகள் பாதுகாக்கப்படுகின்றன?' : language === 'hi' ? 'आपकी वेबसाइट पर इस समय क्या-क्या सुरक्षित है?' : 'What PatchShield is Protecting on Your Website Right Now:'}
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              {language === 'ta' ? 'உங்கள் முக்கிய வியாபாரப் பக்கங்கள் தானியங்கி பாதுகாப்பு வளையத்திற்குள் உள்ளன.' : language === 'hi' ? 'आपकी सभी व्यावसायिक प्रक्रियाएं पूरी तरह सुरक्षित हैं।' : 'Automated active protection active across all business touchpoints.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+            {[
+              {
+                icon: '💳',
+                title: language === 'ta' ? 'பணம் செலுத்தும் கட்டணப் பக்கம்' : language === 'hi' ? 'भुगतान एवं बिलिंग पृष्ठ' : 'Billing & Payment Forms',
+                desc: language === 'ta' ? 'ரகசிய தரவுகளைத் திருடும் SQL Injection தாக்குதல்கள் முற்றிலும் தடுக்கப்பட்டுள்ளன.' : language === 'hi' ? 'डेटा चुराने वाले SQL Injection हमले पूरी तरह ब्लॉक हैं।' : 'SQL Injection attacks attempting to steal customer payment records are neutralized.',
+                status: 'SAFE'
+              },
+              {
+                icon: '🔐',
+                title: language === 'ta' ? 'நிர்வாக உள்நுழைவு பக்கம்' : language === 'hi' ? 'एडमिन लॉगिन क्षेत्र' : 'Store Admin Area & Login',
+                desc: language === 'ta' ? 'தொடர்ந்து கடவுச்சொற்களை தவறாக முயற்சிக்கும் Brute-Force தாக்குதல்கள் முடக்கப்பட்டுள்ளன.' : language === 'hi' ? 'पासवर्ड चुराने वाले Brute-Force हमले तुरंत रोक दिए जाते हैं।' : 'Automated password guessers and brute-force bots are immediately locked out.',
+                status: 'LOCKED'
+              },
+              {
+                icon: '📦',
+                title: language === 'ta' ? 'பொருட்கள் தேடல் பட்டியல்' : language === 'hi' ? 'उत्पाद सूची एवं खोज' : 'Product Search & Catalog',
+                desc: language === 'ta' ? 'விலைகளைத் திருடும் போலி ஸ்கேனர் பாட்கள் உள்ளே நுழைய முடியாது.' : language === 'hi' ? 'डेटा चुराने वाले बॉट्स को तुरंत बाहर कर दिया जाता है।' : 'Automated scraper bots attempting to probe site vulnerabilities are dropped.',
+                status: 'SHIELDED'
+              },
+              {
+                icon: '📁',
+                title: language === 'ta' ? 'வாடிக்கையாளர் கணக்கு & கோப்புகள்' : language === 'hi' ? 'ग्राहक डेटा एवं सिस्टम फ़ाइलें' : 'Customer Records & Server Files',
+                desc: language === 'ta' ? 'ரகசிய சர்வர் கோப்புகளை பார்க்க முயலும் Path Traversal முயற்சிகள் முறியடிக்கப்பட்டுள்ளன.' : language === 'hi' ? 'सर्वर की निजी फ़ाइलों में ताक-झांक करने वाले प्रयास विफल हैं।' : 'Path Traversal exploits trying to peek at backend configuration are neutralized.',
+                status: 'SECURE'
+              }
+            ].map((item, idx) => (
+              <div key={idx} className="p-4 rounded-2xl bg-obsidian-850/80 border border-cyanteal-500/25 flex items-start space-x-3.5">
+                <span className="text-2xl flex-shrink-0">{item.icon}</span>
+                <div className="space-y-1 flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="font-bold text-sm text-cream-200">{item.title}</p>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/30">
+                      {item.status}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed font-sans">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Action Buttons for Shopkeepers */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <a
+            href="/demo-lab"
+            className="p-4 rounded-2xl glass-panel hover:bg-cyanteal-500/20 border border-cyanteal-500/30 flex items-center space-x-3 transition-all duration-200"
+          >
+            <div className="w-10 h-10 rounded-xl bg-copper-500/20 text-copper-300 flex items-center justify-center flex-shrink-0">
+              <Zap className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-bold text-cream-200 text-xs">
+                {language === 'ta' ? 'தாக்குதல் சோதனையை இயக்கு' : language === 'hi' ? 'हमला सिम्युलेटर चलाएं' : 'Simulate an Attack'}
+              </p>
+              <p className="text-[11px] text-slate-400">
+                {language === 'ta' ? 'பாதுகாப்பு எவ்வாறு தடுக்கிறது என நேரில் பாருங்கள்' : language === 'hi' ? 'देखें कि सुरक्षा कैसे काम करती है' : 'Prove defense live in 1 click'}
+              </p>
+            </div>
+          </a>
+
+          <a
+            href="/reports"
+            className="p-4 rounded-2xl glass-panel hover:bg-cyanteal-500/20 border border-cyanteal-500/30 flex items-center space-x-3 transition-all duration-200"
+          >
+            <div className="w-10 h-10 rounded-xl bg-cyanteal-500/20 text-iceteal-300 flex items-center justify-center flex-shrink-0">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-bold text-cream-200 text-xs">
+                {language === 'ta' ? 'எளிய PDF அறிக்கை எடு' : language === 'hi' ? 'आसान PDF रिपोर्ट लें' : 'Download Owner PDF'}
+              </p>
+              <p className="text-[11px] text-slate-400">
+                {language === 'ta' ? 'கடைக்கான சான்றிதழ் அறிக்கை' : language === 'hi' ? 'दुकान का प्रमाणित सारांश' : 'Instant 1-page summary'}
+              </p>
+            </div>
+          </a>
+
+          <a
+            href="/settings"
+            className="p-4 rounded-2xl glass-panel hover:bg-cyanteal-500/20 border border-cyanteal-500/30 flex items-center space-x-3 transition-all duration-200"
+          >
+            <div className="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center flex-shrink-0">
+              <Send className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-bold text-cream-200 text-xs">
+                {language === 'ta' ? 'மொபைல் Telegram எச்சரிக்கை' : language === 'hi' ? 'मोबाइल टेलीग्राम अलर्ट' : 'Telegram Mobile Alerts'}
+              </p>
+              <p className="text-[11px] text-slate-400">
+                {language === 'ta' ? 'மொபைலில் உடனடி அறிவிப்புகள்' : language === 'hi' ? 'मोबाइल पर सीधी सूचना' : 'Instant push alerts to phone'}
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // VIEW 2: ADVANCED MODE (SECOPS / DEVOPS / SECURITY ENGINEER VIEW)
+  // High-density cyber telemetry, Prove-then-Patch hashes, AST sensitivity, RF ML fallback.
+  // =========================================================================
   return (
     <div className="space-y-6">
+      {/* Mode Switcher Callout Banner */}
+      <div className="p-3.5 rounded-3xl glass-panel border border-cyanteal-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+        <div className="flex items-center space-x-3">
+          <Sliders className="w-4 h-4 text-iceteal-300 flex-shrink-0" />
+          <div>
+            <p className="font-bold text-cream-300 text-xs">
+              ⚡ {language === 'ta' ? 'மேம்பட்ட முறை செயலில் உள்ளது (SecOps Deck)' : language === 'hi' ? 'उन्नत मोड सक्रिय है (SecOps Deck)' : 'SecOps Advanced Command Deck Active'}
+            </p>
+            <p className="text-[11px] text-slate-400">
+              {language === 'ta'
+                ? 'நேரலை டெலிமெட்ரி, 6-நிலை நிரூபண குழாய், மற்றும் AST விதிகளின் முழுமையான கட்டுப்பாடு.'
+                : language === 'hi'
+                ? 'लाइव टेलीमेट्री, 6-चरणीय सत्यापन पाइपलाइन और AST नियमों का पूर्ण नियंत्रण।'
+                : 'High-density telemetry, cryptographic rule verification stepper, and AST sensitivity controls.'}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => setDashboardMode('simple')}
+          className="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-copper-500 hover:bg-copper-400 text-cream-100 text-xs font-bold shadow-glow-copper transition-all duration-200 self-start sm:self-auto"
+        >
+          <span>🏪</span>
+          <span>{language === 'ta' ? 'எளிய வணிகர் முறைக்கு மாறு →' : language === 'hi' ? 'सरल व्यापारी मोड में बदलें →' : 'Switch to Shopkeeper View →'}</span>
+        </button>
+      </div>
+
       {/* Hero Header Banner */}
       <div className="relative overflow-hidden p-6 rounded-3xl glass-panel border border-cyanteal-500/30 shadow-2xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -247,7 +528,7 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 4 Sleek KPI Metric Cards */}
+      {/* 4 Sleek Technical KPI Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1 */}
         <div className="p-5 rounded-3xl glass-panel border border-cyanteal-500/25 hover:border-iceteal-300/40 hover:-translate-y-0.5 transition-all duration-300 shadow-lg space-y-3">

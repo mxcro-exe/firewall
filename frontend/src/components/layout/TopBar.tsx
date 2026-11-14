@@ -101,15 +101,37 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
 
       {/* Right: Controls & Profile */}
       <div className="flex items-center space-x-2">
-        {/* Simple vs Advanced Toggle */}
-        <button
-          onClick={() => setDashboardMode(dashboardMode === 'simple' ? 'advanced' : 'simple')}
-          className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border border-cyanteal-500/30 bg-obsidian-850/80 text-xs font-medium text-cream-300 hover:border-iceteal-300/40 transition-all duration-200"
-          title="Toggle Simple / Advanced Mode"
-        >
-          <Sliders className="w-3.5 h-3.5 text-copper-400" />
-          <span>{dashboardMode === 'simple' ? 'Simple' : 'Advanced'}</span>
-        </button>
+        {/* Simple (Shopkeeper) vs Advanced (SecOps) Dual Segmented Switch */}
+        <div className="flex items-center p-0.5 rounded-2xl bg-obsidian-950 border border-cyanteal-500/30 text-xs">
+          <button
+            onClick={() => setDashboardMode('simple')}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-medium transition-all duration-200 ${
+              dashboardMode === 'simple'
+                ? 'bg-gradient-to-r from-copper-500 to-copper-600 text-cream-100 shadow-glow-copper font-bold'
+                : 'text-slate-400 hover:text-cream-200 hover:bg-cyanteal-500/10'
+            }`}
+            title="Simple Mode for Store Owners / Shopkeepers"
+          >
+            <span>🏪</span>
+            <span className="hidden sm:inline font-sans text-[11px]">
+              {language === 'ta' ? 'எளிய முறை (வணிகர்)' : language === 'hi' ? 'सरल मोड (व्यापारी)' : 'Simple (Shopkeeper)'}
+            </span>
+          </button>
+          <button
+            onClick={() => setDashboardMode('advanced')}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-medium transition-all duration-200 ${
+              dashboardMode === 'advanced'
+                ? 'bg-gradient-to-r from-deepteal-700 to-cyanteal-500 text-cream-200 border border-iceteal-300/40 shadow-glow-teal font-bold'
+                : 'text-slate-400 hover:text-cream-200 hover:bg-cyanteal-500/10'
+            }`}
+            title="Advanced Mode for Security Engineers / DevOps"
+          >
+            <Sliders className="w-3 h-3 text-iceteal-300" />
+            <span className="hidden sm:inline font-sans text-[11px]">
+              {language === 'ta' ? 'மேம்பட்ட முறை (SecOps)' : language === 'hi' ? 'उन्नत मोड (SecOps)' : 'Advanced (SecOps)'}
+            </span>
+          </button>
+        </div>
 
         {/* Language Switcher Dropdown */}
         <div className="relative">

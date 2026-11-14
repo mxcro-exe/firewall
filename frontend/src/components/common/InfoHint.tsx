@@ -76,3 +76,4 @@ export const InfoHint: React.FC<InfoHintProps> = ({
     </div>
   );
 };
+
