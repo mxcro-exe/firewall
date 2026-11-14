@@ -26,3 +26,4 @@ class CommandInjectionDefenseModule:
         return False, "", {}
 
 cmd_module = CommandInjectionDefenseModule()
+

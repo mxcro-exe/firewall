@@ -89,3 +89,4 @@ def run_sandbox_exploit_test(rule: VirtualPatchRule) -> Tuple[bool, Dict[str, An
         "status": "PASS" if all_blocked else "FAIL",
         "samples": test_results
     }
+

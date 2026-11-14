@@ -79,3 +79,4 @@ async def get_site_health_score(
         "grade": grade,
         "top_fixes": top_fixes[:3]
     }
+

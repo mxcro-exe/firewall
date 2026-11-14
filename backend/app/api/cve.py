@@ -99,3 +99,4 @@ async def import_custom_cve_json(
         return {"status": "success", "imported": synced}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid JSON file format: {str(e)}")
+

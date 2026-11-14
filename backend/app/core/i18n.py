@@ -99,3 +99,4 @@ def get_supported_languages():
         {"code": "ta", "name": "Tamil", "native": "தமிழ்"},
         {"code": "hi", "name": "Hindi", "native": "हिन्दी"}
     ]
+

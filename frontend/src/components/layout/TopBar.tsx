@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Menu, Search, Bell, Sun, Moon, Monitor, Globe2, 
-  User as UserIcon, LogOut, ShieldCheck, ShieldAlert, Eye, Sliders
+  User as UserIcon, LogOut, ShieldCheck, ShieldAlert, Eye, Sliders, Sparkles
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -37,39 +37,39 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between">
+    <header className="sticky top-0 z-30 h-16 bg-obsidian-950/75 backdrop-blur-2xl border-b border-cyanteal-500/20 px-4 flex items-center justify-between">
       {/* Left: Hamburger & Search */}
       <div className="flex items-center space-x-3">
         <button
           onClick={onToggleSidebar}
           aria-label="Toggle Navigation Sidebar"
-          className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          className="p-2 rounded-xl text-slate-300 hover:text-cream-300 hover:bg-cyanteal-500/20 transition-all duration-200"
         >
           <Menu className="w-5 h-5" />
         </button>
 
         <div className="relative hidden md:block w-72 lg:w-96">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-iceteal-300/70" />
           <input
             id="global-search-input"
             type="text"
             placeholder={t('topbar.search')}
-            className="w-full pl-9 pr-12 py-1.5 text-xs bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-slate-200 transition"
+            className="w-full pl-9 pr-12 py-1.5 text-xs bg-obsidian-850/90 border border-cyanteal-500/30 rounded-xl focus:outline-none focus:ring-1 focus:ring-iceteal-300 focus:border-iceteal-300 text-cream-200 placeholder:text-slate-500 transition-all duration-200"
           />
-          <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-mono bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded text-slate-500 dark:text-slate-300">
+          <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-mono bg-obsidian-950/90 border border-cyanteal-500/30 rounded-md text-iceteal-300">
             Ctrl+K
           </kbd>
         </div>
       </div>
 
       {/* Middle: Global Security Mode Pill Selector */}
-      <div className="hidden xl:flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+      <div className="hidden xl:flex items-center bg-obsidian-950/80 p-1 rounded-2xl border border-cyanteal-500/25 text-xs">
         <button
           onClick={() => setGlobalMode('MONITOR')}
-          className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg font-medium transition ${
+          className={`flex items-center space-x-1.5 px-3 py-1 rounded-xl font-medium transition-all duration-200 ${
             globalMode === 'MONITOR' 
-              ? 'bg-amber-500 text-white shadow-sm' 
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm' 
+              : 'text-slate-400 hover:text-cream-200 hover:bg-cyanteal-500/10'
           }`}
         >
           <Eye className="w-3.5 h-3.5" />
@@ -77,21 +77,21 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
         </button>
         <button
           onClick={() => setGlobalMode('PROTECT')}
-          className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg font-medium transition ${
+          className={`flex items-center space-x-1.5 px-3 py-1 rounded-xl font-medium transition-all duration-200 ${
             globalMode === 'PROTECT' 
-              ? 'bg-emerald-600 text-white shadow-sm' 
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-gradient-to-r from-deepteal-700 to-cyanteal-500 text-cream-200 border border-iceteal-300/40 shadow-glow-teal font-semibold' 
+              : 'text-slate-400 hover:text-cream-200 hover:bg-cyanteal-500/10'
           }`}
         >
-          <ShieldCheck className="w-3.5 h-3.5" />
+          <ShieldCheck className="w-3.5 h-3.5 text-iceteal-300" />
           <span>{t('modes.protect')}</span>
         </button>
         <button
           onClick={() => setGlobalMode('STRICT')}
-          className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg font-medium transition ${
+          className={`flex items-center space-x-1.5 px-3 py-1 rounded-xl font-medium transition-all duration-200 ${
             globalMode === 'STRICT' 
-              ? 'bg-rose-600 text-white shadow-sm' 
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-copper-500/25 text-copper-300 border border-copper-500/40 shadow-glow-copper font-semibold' 
+              : 'text-slate-400 hover:text-cream-200 hover:bg-cyanteal-500/10'
           }`}
         >
           <ShieldAlert className="w-3.5 h-3.5" />
@@ -104,10 +104,10 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
         {/* Simple vs Advanced Toggle */}
         <button
           onClick={() => setDashboardMode(dashboardMode === 'simple' ? 'advanced' : 'simple')}
-          className="hidden sm:flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+          className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border border-cyanteal-500/30 bg-obsidian-850/80 text-xs font-medium text-cream-300 hover:border-iceteal-300/40 transition-all duration-200"
           title="Toggle Simple / Advanced Mode"
         >
-          <Sliders className="w-3.5 h-3.5 text-brand-500" />
+          <Sliders className="w-3.5 h-3.5 text-copper-400" />
           <span>{dashboardMode === 'simple' ? 'Simple' : 'Advanced'}</span>
         </button>
 
@@ -115,74 +115,67 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
         <div className="relative">
           <button
             onClick={() => setShowLangMenu(!showLangMenu)}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border border-cyanteal-500/30 bg-obsidian-850/80 text-xs font-semibold text-cream-300 hover:border-iceteal-300/50 transition-all duration-200"
             title="Switch Language / மொழி / भाषा"
           >
-            <Globe2 className="w-3.5 h-3.5 text-indigo-500" />
+            <Globe2 className="w-3.5 h-3.5 text-iceteal-300" />
             <span>{language === 'en' ? 'English' : language === 'ta' ? 'தமிழ்' : 'हिन्दी'}</span>
           </button>
 
           {showLangMenu && (
-            <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-1 z-50 text-xs">
+            <div className="absolute right-0 mt-2 w-36 glass-panel-elevated rounded-2xl shadow-2xl py-1 z-50 text-xs border border-cyanteal-500/40 animate-in fade-in zoom-in-95 duration-150">
               <button
                 onClick={() => { setLanguage('en'); setShowLangMenu(false); }}
-                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-700 ${
-                  language === 'en' ? 'text-brand-600 dark:text-brand-400 font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-700 dark:text-slate-300'
+                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-cyanteal-500/20 ${
+                  language === 'en' ? 'text-iceteal-300 font-bold bg-deepteal-700/40' : 'text-slate-300'
                 }`}
               >
                 <span>English</span>
-                {language === 'en' && <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
+                {language === 'en' && <span className="w-1.5 h-1.5 rounded-full bg-iceteal-300 shadow-glow-teal" />}
               </button>
               <button
                 onClick={() => { setLanguage('ta'); setShowLangMenu(false); }}
-                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-700 ${
-                  language === 'ta' ? 'text-brand-600 dark:text-brand-400 font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-700 dark:text-slate-300'
+                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-cyanteal-500/20 ${
+                  language === 'ta' ? 'text-iceteal-300 font-bold bg-deepteal-700/40' : 'text-slate-300'
                 }`}
               >
                 <span>தமிழ்</span>
-                {language === 'ta' && <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
+                {language === 'ta' && <span className="w-1.5 h-1.5 rounded-full bg-iceteal-300 shadow-glow-teal" />}
               </button>
               <button
                 onClick={() => { setLanguage('hi'); setShowLangMenu(false); }}
-                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-700 ${
-                  language === 'hi' ? 'text-brand-600 dark:text-brand-400 font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-700 dark:text-slate-300'
+                className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-cyanteal-500/20 ${
+                  language === 'hi' ? 'text-iceteal-300 font-bold bg-deepteal-700/40' : 'text-slate-300'
                 }`}
               >
                 <span>हिन्दी</span>
-                {language === 'hi' && <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
+                {language === 'hi' && <span className="w-1.5 h-1.5 rounded-full bg-iceteal-300 shadow-glow-teal" />}
               </button>
             </div>
           )}
         </div>
-
-        {/* Theme Toggle */}
-        <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          aria-label="Toggle Color Theme"
-          className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-        >
-          {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
-        </button>
 
         {/* Notifications */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
             aria-label="View Notifications"
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition relative"
+            className="p-2 rounded-xl text-slate-300 hover:text-cream-300 hover:bg-cyanteal-500/20 transition-all duration-200 relative"
           >
             <Bell className="w-4 h-4" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full animate-ping" />
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl p-3 z-50 text-xs">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-700 font-semibold">
-                <span>{t('topbar.notifications')}</span>
-                <span className="text-[10px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-1.5 py-0.5 rounded">All systems secure</span>
+            <div className="absolute right-0 mt-2 w-80 glass-panel-elevated border border-cyanteal-500/40 rounded-2xl shadow-2xl p-3 z-50 text-xs animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex justify-between items-center pb-2 border-b border-cyanteal-500/20 font-semibold">
+                <span className="text-cream-300">{t('topbar.notifications')}</span>
+                <span className="text-[10px] bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">
+                  All systems secure
+                </span>
               </div>
-              <div className="py-3 text-slate-500 text-center">
-                {language === 'ta' ? 'புதிய பாதுகாப்பு சிக்கல்கள் எதுவும் இல்லை' : 'No new urgent security incidents.'}
+              <div className="py-3 text-slate-400 text-center font-sans text-[11px]">
+                {language === 'ta' ? 'புதிய பாதுகாப்பு சிக்கல்கள் எதுவும் இல்லை' : language === 'hi' ? 'कोई नया सुरक्षा ख़तरा नहीं है' : 'No new urgent security incidents.'}
               </div>
             </div>
           )}
@@ -192,29 +185,29 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
         <div className="relative">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="flex items-center space-x-2 p-1 rounded-xl hover:bg-cyanteal-500/20 transition-all duration-200"
           >
-            <div className="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-copper-500 via-deepteal-700 to-cyanteal-500 text-cream-200 flex items-center justify-center font-bold text-xs uppercase shadow-md border border-white/10 ring-1 ring-copper-500/30">
               {username ? username[0] : 'A'}
             </div>
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-1 z-50 text-xs">
-              <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-700">
-                <p className="font-semibold text-slate-900 dark:text-white">{username || 'Admin'}</p>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider">{role || 'ADMIN'}</p>
+            <div className="absolute right-0 mt-2 w-48 glass-panel-elevated border border-cyanteal-500/40 rounded-2xl shadow-2xl py-1 z-50 text-xs animate-in fade-in zoom-in-95 duration-150">
+              <div className="px-3 py-2 border-b border-cyanteal-500/20">
+                <p className="font-semibold text-cream-200">{username || 'Admin'}</p>
+                <p className="text-[10px] text-iceteal-300 font-mono tracking-wider">{role || 'ADMIN'}</p>
               </div>
               <a
                 href="/settings"
-                className="flex items-center space-x-2 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
+                className="flex items-center space-x-2 px-3 py-2 hover:bg-cyanteal-500/20 text-slate-300 hover:text-cream-200 transition"
               >
-                <UserIcon className="w-3.5 h-3.5 text-slate-400" />
+                <UserIcon className="w-3.5 h-3.5 text-iceteal-300" />
                 <span>{t('topbar.profile')}</span>
               </a>
               <button
                 onClick={logout}
-                className="w-full flex items-center space-x-2 px-3 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                className="w-full flex items-center space-x-2 px-3 py-2 text-copper-400 hover:bg-copper-500/10 transition"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>{t('topbar.logout')}</span>
@@ -226,4 +219,3 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
     </header>
   );
 };
-

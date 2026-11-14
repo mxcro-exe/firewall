@@ -25,3 +25,4 @@ class PathTraversalDefenseModule:
         return False, "", {}
 
 path_module = PathTraversalDefenseModule()
+

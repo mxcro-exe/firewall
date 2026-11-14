@@ -127,3 +127,4 @@ def test_prove_then_patch_lifecycle_api():
             assert rb_resp.json()["status"] == "success"
 
     asyncio.run(run())
+

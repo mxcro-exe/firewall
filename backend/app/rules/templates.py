@@ -50,3 +50,4 @@ RULE_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "explanation_ta": "சேவையகத்தை கைப்பற்றும் மலிசியஸ் PHP, JSP அல்லது ஷெல் கோப்புகள் பதிவேற்றப்படுவதைத் தடுக்கிறது."
     }
 }
+

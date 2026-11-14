@@ -39,3 +39,4 @@ class DDoSProtectionModule:
         return False, "", {"current_rate_per_min": req_count}
 
 ddos_module = DDoSProtectionModule()
+

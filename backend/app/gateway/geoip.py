@@ -24,3 +24,4 @@ class OfflineGeoIPFilter:
         return False, ""
 
 geoip_filter = OfflineGeoIPFilter()
+

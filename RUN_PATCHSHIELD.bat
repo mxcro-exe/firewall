@@ -47,3 +47,4 @@ echo  To run attack simulation:
 echo    python demo_lab/attack_simulator.py
 echo ======================================================================
 pause
+

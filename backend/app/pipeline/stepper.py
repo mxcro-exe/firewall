@@ -165,3 +165,4 @@ async def check_and_retire_rules(site_id: str, component_name: str, new_version:
 
     await db.commit()
     return retired_count
+

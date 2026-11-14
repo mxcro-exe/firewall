@@ -29,3 +29,4 @@ async def list_traffic_logs(
     res = await db.execute(query)
     logs = res.scalars().all()
     return logs
+

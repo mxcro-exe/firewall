@@ -109,3 +109,4 @@ def ensure_offline_cache_files(data_dir: Path):
     if not cve_file.exists():
         with open(cve_file, "w", encoding="utf-8") as f:
             json.dump(CURATED_SMB_CVES, f, indent=2)
+

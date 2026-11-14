@@ -36,3 +36,4 @@ class XSSDefenseModule:
         return False, "", {}
 
 xss_module = XSSDefenseModule()
+

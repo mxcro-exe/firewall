@@ -42,3 +42,4 @@ class BruteForceDefenseModule:
         return False, "", {}
 
 brute_force_module = BruteForceDefenseModule()
+

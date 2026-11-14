@@ -56,3 +56,4 @@ async def get_proof_evidence(
         select(ProofRun).where(ProofRun.rule_id == rule_id).order_by(ProofRun.completed_at.desc())
     )
     return res.scalars().all()
+

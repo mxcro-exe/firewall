@@ -159,3 +159,4 @@ async def delete_rule(
     await db.commit()
     await log_audit(db, current_user.username, current_user.role, "RULE_DELETED", "VirtualPatchRule", {"rule_id": rule_id})
     return {"status": "success", "message": "Rule deleted"}
+

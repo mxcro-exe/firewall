@@ -41,3 +41,4 @@ async def mark_alert_read(
     alert.is_read = True
     await db.commit()
     return {"status": "success", "alert_id": alert_id, "is_read": True}
+

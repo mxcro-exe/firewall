@@ -19,3 +19,4 @@ def is_honeypot_path(path: str) -> Tuple[bool, str]:
         if clean == trap or clean.startswith(trap):
             return True, f"Attacker accessed honeypot deception trap: {trap}"
     return False, ""
+

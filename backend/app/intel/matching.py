@@ -109,3 +109,4 @@ async def match_cve_exposure_for_site(site_id: str, db: AsyncSession) -> List[Di
     matched_results.sort(key=lambda x: (status_order.get(x["status"], 3), -x["priority_score"]))
 
     return matched_results
+

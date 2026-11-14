@@ -93,3 +93,4 @@ class AttackDefenseManager:
             await db.commit()
 
 defense_manager = AttackDefenseManager()
+

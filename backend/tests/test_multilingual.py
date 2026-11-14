@@ -193,3 +193,4 @@ def test_api_language_endpoints_and_csv_bom():
             assert pdf_res.content.startswith(b"%PDF-")
 
     asyncio.run(run())
+

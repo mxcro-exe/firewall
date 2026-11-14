@@ -23,3 +23,4 @@ class BotScraperDefenseModule:
         return False, "", {}
 
 bot_module = BotScraperDefenseModule()
+

@@ -83,3 +83,4 @@ def normalize_string(raw_text: str) -> Tuple[str, bool, List[str]]:
             pass
 
     return text, len(techniques) > 0, techniques
+

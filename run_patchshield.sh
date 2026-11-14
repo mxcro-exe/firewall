@@ -32,3 +32,4 @@ else
     trap "kill $PID_DEMO $PID_BACKEND $PID_FRONTEND" EXIT
     wait
 fi
+

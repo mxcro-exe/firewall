@@ -135,3 +135,4 @@ def parse_manifest_content(filename: str, content: str) -> List[Dict[str, str]]:
                     })
 
     return components
+

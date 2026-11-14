@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Flame, ShieldCheck, ShieldAlert, Cpu, Sparkles, 
-  Activity, Play, CheckCircle2, Sliders, AlertTriangle
+  Activity, Play, CheckCircle2, Sliders, AlertTriangle, Info
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { InfoHint } from '../components/common/InfoHint';
 import api from '../services/api';
 
 interface AttackModule {
@@ -79,122 +80,161 @@ export const AttackModules: React.FC = () => {
     }
   };
 
+  const getModuleInfo = (key: string) => {
+    const map: Record<string, { desc: string; badge: string }> = {
+      sqli: { desc: t('simple_mode.sqli'), badge: 'DATABASE' },
+      xss: { desc: t('simple_mode.xss'), badge: 'XSS FILTER' },
+      path: { desc: t('simple_mode.path'), badge: 'FILE SYSTEM' },
+      cmd: { desc: t('simple_mode.cmd'), badge: 'SHELL' },
+      ddos: { desc: t('simple_mode.ddos'), badge: 'RATE LIMIT' },
+      brute: { desc: t('simple_mode.brute'), badge: 'BRUTE-FORCE' },
+      bot: { desc: t('simple_mode.bot'), badge: 'BOT SCRAPER' },
+    };
+    return map[key] || { desc: 'Dedicated attack mitigation engine.', badge: 'SHIELD' };
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-          {t('nav.attackModules')}
-        </h2>
-        <p className="text-xs text-slate-500">
-          7 Attack-Specific Defense Modules & Secondary 23-Feature ML Anomaly Classifier.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cyanteal-500/20 pb-4">
+        <div>
+          <div className="flex items-center space-x-2">
+            <h2 className="text-xl font-bold text-cream-300">
+              {t('nav.attackModules')}
+            </h2>
+            <InfoHint 
+              title="7 Defense In-Depth Modules"
+              content="Independent detection and mitigation switches. You can disable, tune sensitivity (Low, Med, High), and monitor blocks per module independently."
+              badge="7 SHIELDS"
+            />
+          </div>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Dedicated attack detectors paired with an intelligent 23-feature Random Forest ML fallback.
+          </p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-deepteal-700/60 text-iceteal-200 border border-iceteal-300/30">
+            ALL 7 DEFENSES ARMED
+          </span>
+        </div>
       </div>
 
       {/* 7 Defense Modules Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {modules.map((m) => (
-          <div
-            key={m.module_key}
-            className={`p-5 rounded-3xl border transition flex flex-col justify-between space-y-4 ${
-              m.is_enabled
-                ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm'
-                : 'bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/50 opacity-60'
-            }`}
-          >
-            <div className="space-y-2">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">
-                    {m.module_name}
-                  </h3>
-                  <p className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                    MODULE: {m.module_key}
-                  </p>
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {modules.map((m) => {
+          const info = getModuleInfo(m.module_key);
+          return (
+            <div
+              key={m.module_key}
+              className={`p-5 rounded-3xl border transition-all duration-300 flex flex-col justify-between space-y-4 ${
+                m.is_enabled
+                  ? 'glass-panel border-cyanteal-500/30 hover:border-iceteal-300/50 shadow-lg'
+                  : 'bg-obsidian-850/40 border-white/5 opacity-60'
+              }`}
+            >
+              <div className="space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center space-x-1.5">
+                      <h3 className="font-bold text-sm text-cream-200">
+                        {m.module_name}
+                      </h3>
+                      <InfoHint title={m.module_name} content={info.desc} badge={info.badge} />
+                    </div>
+                    <p className="text-[10px] font-mono text-iceteal-300 uppercase tracking-wider">
+                      MODULE: {m.module_key}
+                    </p>
+                  </div>
 
-                {/* On/Off Switch */}
-                <button
-                  onClick={() => handleToggle(m.module_key)}
-                  className={`w-11 h-6 flex items-center rounded-full p-1 transition duration-300 ${
-                    m.is_enabled ? 'bg-emerald-600 justify-end' : 'bg-slate-300 dark:bg-slate-700 justify-start'
-                  }`}
-                >
-                  <div className="bg-white w-4 h-4 rounded-full shadow-md" />
-                </button>
-              </div>
-
-              {/* Metrics pill */}
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
-                <span className="text-slate-500 text-[11px]">Blocked Attacks (24h):</span>
-                <span className="font-bold text-emerald-500 font-mono text-sm">
-                  {m.blocked_count_24h}
-                </span>
-              </div>
-            </div>
-
-            {/* Sensitivity Selector */}
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
-              <span className="text-slate-500 text-[11px]">Sensitivity:</span>
-              <div className="flex space-x-1">
-                {['LOW', 'MEDIUM', 'HIGH'].map((s) => (
+                  {/* Sleek On/Off Switch */}
                   <button
-                    key={s}
-                    onClick={() => handleSensitivityChange(m.module_key, s)}
-                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold transition ${
-                      m.sensitivity === s
-                        ? 'bg-brand-600 text-white shadow-sm'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    onClick={() => handleToggle(m.module_key)}
+                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${
+                      m.is_enabled ? 'bg-cyanteal-500 justify-end shadow-glow-teal' : 'bg-obsidian-800 justify-start border border-white/10'
                     }`}
                   >
-                    {s}
+                    <div className="bg-cream-200 w-4 h-4 rounded-full shadow-md" />
                   </button>
-                ))}
+                </div>
+
+                {/* Metrics pill */}
+                <div className="p-3 rounded-2xl bg-obsidian-850/80 border border-cyanteal-500/20 flex justify-between items-center text-xs">
+                  <span className="text-slate-400 text-[11px]">Blocked Attacks (24h):</span>
+                  <span className="font-bold text-iceteal-300 font-mono text-sm">
+                    {m.blocked_count_24h}
+                  </span>
+                </div>
+              </div>
+
+              {/* Sensitivity Selector */}
+              <div className="flex items-center justify-between text-xs pt-2 border-t border-cyanteal-500/20">
+                <span className="text-slate-400 text-[11px]">Sensitivity:</span>
+                <div className="flex space-x-1">
+                  {['LOW', 'MEDIUM', 'HIGH'].map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => handleSensitivityChange(m.module_key, s)}
+                      className={`px-2.5 py-0.5 rounded-xl text-[10px] font-mono font-bold transition-all duration-200 ${
+                        m.sensitivity === s
+                          ? 'bg-gradient-to-r from-deepteal-700 to-cyanteal-500 text-cream-200 border border-iceteal-300/40 shadow-sm'
+                          : 'bg-obsidian-850 text-slate-400 hover:text-cream-200 hover:bg-obsidian-800 border border-transparent'
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* ML Classifier Status & Inference Playground Card */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-slate-900 to-indigo-950 border border-indigo-500/30 text-white space-y-4 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="p-6 rounded-3xl glass-panel-elevated border border-cyanteal-500/35 text-white space-y-4 shadow-2xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cyanteal-500/20 pb-3">
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <Cpu className="w-5 h-5 text-indigo-400" />
-              <h3 className="font-bold text-sm tracking-wide">
+              <Cpu className="w-5 h-5 text-iceteal-300" />
+              <h3 className="font-bold text-sm tracking-wide text-cream-300">
                 23-Feature Random Forest ML Fallback Subsystem
               </h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                ACTIVE
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-500/30">
+                MODEL LOADED
               </span>
+              <InfoHint 
+                title="Reused ML Classification Engine"
+                content="Preserved from the legacy IDS project and upgraded. Employs a 23-feature vector extraction (path length, entropy, special chars, etc.) and Isolation Forest outlier detection to classify attacks that lack an explicit virtual patch."
+                badge="ML ARB 2.0"
+              />
             </div>
-            <p className="text-xs text-slate-300">
-              Reused trained model from legacy IDS. Acts as secondary safety net for unknown attacks without a virtual patch rule.
+            <p className="text-xs text-slate-300 font-sans">
+              Secondary safety net for zero-day threats with top-3 feature explainability.
             </p>
           </div>
 
-          <div className="text-xs text-indigo-300 font-mono">
-            {mlStatus ? mlStatus.model_version : 'Loading...'}
+          <div className="text-xs text-cream-300 font-mono bg-obsidian-950 px-3 py-1 rounded-full border border-cyanteal-500/30">
+            {mlStatus ? mlStatus.model_version : 'Model: RF-23-v1.0'}
           </div>
         </div>
 
         {/* Live Test Inference Playground */}
         <div className="pt-2 space-y-3">
           <label className="block text-xs font-semibold text-slate-300">
-            Live ML Inference Playground (Test any attack payload):
+            Live ML Inference Playground (Evaluate any attack query string):
           </label>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="text"
               value={testPayload}
               onChange={(e) => setTestPayload(e.target.value)}
-              className="flex-1 px-3 py-2 bg-slate-800/90 border border-slate-700 rounded-xl text-xs text-white font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-4 py-2.5 bg-obsidian-950/90 border border-cyanteal-500/30 rounded-2xl text-xs text-cream-200 font-mono focus:outline-none focus:ring-1 focus:ring-iceteal-300"
             />
             <button
               onClick={handleRunMlTest}
               disabled={testing}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center space-x-1.5"
+              className="px-5 py-2.5 bg-gradient-to-r from-copper-500 to-copper-600 hover:from-copper-400 hover:to-copper-500 text-cream-100 rounded-2xl text-xs font-bold shadow-glow-copper transition-all duration-200 flex items-center justify-center space-x-2"
             >
               <Play className="w-3.5 h-3.5" />
               <span>{testing ? 'Evaluating...' : 'Test ML Inference'}</span>
@@ -203,30 +243,30 @@ export const AttackModules: React.FC = () => {
 
           {/* Inference Result View */}
           {mlInferenceResult && (
-            <div className="p-4 bg-slate-900/90 border border-indigo-500/40 rounded-2xl text-xs space-y-2 font-mono">
-              <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="p-4 bg-obsidian-950 border border-cyanteal-500/40 rounded-2xl text-xs space-y-2.5 font-mono">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-2">
                 <span className="text-slate-400">
-                  Prediction: <strong className="text-rose-400 text-sm">{mlInferenceResult.prediction}</strong>
+                  Prediction: <strong className="text-copper-400 text-sm">{mlInferenceResult.prediction}</strong>
                 </span>
                 <span className="text-slate-400">
                   Confidence: <strong className="text-emerald-400">{(mlInferenceResult.confidence * 100).toFixed(1)}%</strong>
                 </span>
                 <span className="text-slate-400">
-                  Anomaly Flag: <strong className="text-amber-400">{mlInferenceResult.is_anomaly ? 'YES' : 'NO'}</strong>
+                  Anomaly Flag: <strong className="text-cream-300">{mlInferenceResult.is_anomaly ? 'YES' : 'NO'}</strong>
                 </span>
               </div>
 
               {/* Top 3 Features Contribution */}
               {mlInferenceResult.top_features && mlInferenceResult.top_features.length > 0 && (
-                <div className="pt-2 border-t border-slate-800 space-y-1">
-                  <span className="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] text-iceteal-300 font-bold uppercase tracking-wider">
                     Top 3 Contributing Features (Explainability):
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[11px]">
                     {mlInferenceResult.top_features.map((f: any, idx: number) => (
-                      <div key={idx} className="p-2 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                      <div key={idx} className="p-2.5 rounded-xl bg-deepteal-700/20 border border-cyanteal-500/30">
                         <p className="text-slate-400 text-[10px] truncate">{f.feature}</p>
-                        <p className="font-bold text-white">Value: {f.value} <span className="text-indigo-400 text-[10px]">(Imp: {f.impact})</span></p>
+                        <p className="font-bold text-cream-200">Value: {f.value} <span className="text-iceteal-300 text-[10px]">(Imp: {f.impact})</span></p>
                       </div>
                     ))}
                   </div>

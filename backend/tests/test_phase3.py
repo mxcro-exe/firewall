@@ -88,3 +88,4 @@ def test_cve_sync_and_exposure_api():
             assert "storefront" in matched_cve["reason"]
 
     asyncio.run(run())
+

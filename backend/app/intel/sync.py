@@ -75,3 +75,4 @@ async def sync_vulnerability_database(db: AsyncSession, custom_data_list=None):
 
     await db.commit()
     return synced_count
+

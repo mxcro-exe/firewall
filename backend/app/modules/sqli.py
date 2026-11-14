@@ -37,3 +37,4 @@ class SQLiDefenseModule:
         return False, "", {}
 
 sqli_module = SQLiDefenseModule()
+

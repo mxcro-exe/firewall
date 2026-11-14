@@ -26,7 +26,7 @@ echo [*] Starting Deliberately Vulnerable Demo Store on :9000...
 start "PatchShield - Demo Store (:9000)" cmd /k "python -m uvicorn demo_lab.app:app --port 9000 --reload"
 
 echo [*] Starting PatchShield Backend Gateway on :8000...
-start "PatchShield - Backend Gateway (:8000)" cmd /k "python -m uvicorn backend.app.main:app --port 8000 --reload"
+start "PatchShield - Backend Gateway (:8000)" cmd /k "python -m uvicorn app.main:app --app-dir backend --port 8000 --reload"
 
 echo [*] Starting PatchShield Frontend Dashboard on :5173...
 start "PatchShield - React UI (:5173)" cmd /k "cd frontend && npm run dev"
@@ -58,3 +58,4 @@ echo ======================================================================
 echo.
 echo Press any key to stop this runner window (background servers will stay open in their windows).
 pause >nul
+

@@ -144,3 +144,4 @@ async def get_site_exposure_matching(
 
     matches = await match_cve_exposure_for_site(site_id, db)
     return matches
+
