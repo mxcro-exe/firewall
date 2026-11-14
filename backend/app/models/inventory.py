@@ -12,3 +12,4 @@ class StackInventory(Base):
     cpe_string = Column(String(255), nullable=True)
     detection_source = Column(String(20), default="MANUAL")  # MANUAL, HEADER, MANIFEST
     detected_at = Column(DateTime, default=datetime.utcnow)
+

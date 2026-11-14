@@ -16,3 +16,4 @@ class Alert(Base):
     channel = Column(String(30), default="IN_APP")  # TELEGRAM, EMAIL, WEBHOOK, IN_APP
     is_read = Column(Boolean, default=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
+

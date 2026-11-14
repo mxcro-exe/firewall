@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: patchshield-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=patchshield-super-secret-key-change-in-production-2026
+      - ENVIRONMENT=production
+      - SQLITE_DB_PATH=/app/data/patchshield.db
+      - OFFLINE_MODE=true
+    volumes:
+      - patchshield-data:/app/data
+    restart: unless-stopped
+    networks:
+      - patchshield-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: patchshield-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - patchshield-network
+
+  demo-store:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: patchshield-demo-store
+    command: ["uvicorn", "demo_lab.app:app", "--host", "0.0.0.0", "--port", "9000"]
+    ports:
+      - "9000:9000"
+    restart: unless-stopped
+    networks:
+      - patchshield-network
+
+networks:
+  patchshield-network:
+    driver: bridge
+
+volumes:
+  patchshield-data:

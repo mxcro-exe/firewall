@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import {
   Shield, LayoutDashboard, Globe, ShieldAlert, FileCode,
   GitCompare, Flame, Bot, Activity, Bell, FileText,
-  BarChart3, History, Settings, HelpCircle, CheckCircle2
+  BarChart3, History, Settings, HelpCircle, CheckCircle2, Sparkles
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -26,6 +26,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
     { to: '/alerts', label: t('nav.alerts'), icon: Bell },
     { to: '/reports', label: t('nav.reports'), icon: FileText },
     { to: '/metrics', label: t('nav.metrics'), icon: BarChart3, badge: 'PS5' },
+    { to: '/demo-lab', label: t('nav.demoLab'), icon: Sparkles, badge: 'DEMO' },
     { to: '/audit-log', label: t('nav.auditLog'), icon: History },
     { to: '/settings', label: t('nav.settings'), icon: Settings },
     { to: '/help', label: t('nav.help'), icon: HelpCircle },
@@ -108,3 +109,4 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
     </aside>
   );
 };
+

@@ -14,3 +14,4 @@ class CVE(Base):
     patch_guidance = Column(Text, nullable=True)
     published_date = Column(DateTime, nullable=True)
     cached_at = Column(DateTime, default=datetime.utcnow)
+

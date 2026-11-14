@@ -26,3 +26,4 @@ async def list_audit_logs(
     result = await db.execute(query)
     logs = result.scalars().all()
     return logs
+

@@ -16,6 +16,7 @@
     "reports": "Reports & Analytics",
     "metrics": "PS5 Metrics",
     "auditLog": "Audit Log",
+    "demoLab": "Demo Lab & Simulator",
     "settings": "Settings",
     "help": "Help & Support"
   },
@@ -88,3 +89,4 @@
     "wizardDesc": "Get your business protected in under 3 minutes"
   }
 }
+

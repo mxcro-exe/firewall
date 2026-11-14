@@ -33,3 +33,4 @@ async def init_db():
             module_config, agent_log, alert, audit
         )
         await conn.run_sync(Base.metadata.create_all)
+

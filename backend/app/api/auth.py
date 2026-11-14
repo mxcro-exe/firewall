@@ -122,3 +122,4 @@ async def verify_totp(
     await db.commit()
     await log_audit(db, current_user.username, current_user.role, "2FA_ENABLED", "User")
     return {"status": "success", "message": "2FA successfully enabled"}
+

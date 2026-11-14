@@ -23,3 +23,4 @@ class TotpSetupResponse(BaseModel):
 
 class TotpVerifyRequest(BaseModel):
     code: str
+

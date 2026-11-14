@@ -40,3 +40,4 @@ export const useMode = () => {
   if (!context) throw new Error('useMode must be used within ModeProvider');
   return context;
 };
+

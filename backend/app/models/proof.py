@@ -17,3 +17,4 @@ class ProofRun(Base):
     canary_pct = Column(Integer, default=0)          # Current canary traffic %
     run_log = Column(Text, nullable=True)
     completed_at = Column(DateTime, nullable=True)
+

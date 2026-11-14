@@ -20,3 +20,4 @@ class TrafficLog(Base):
     rule_action = Column(String(30), default="PASSED", index=True)
     matched_rule_id = Column(String(36), nullable=True)
     response_status = Column(Integer, default=200)
+

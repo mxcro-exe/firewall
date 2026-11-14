@@ -17,3 +17,4 @@ class AgentAction(Base):
     approved_by = Column(String(50), nullable=True)
     explanation_en = Column(Text, nullable=False)
     explanation_ta = Column(Text, nullable=False)
+

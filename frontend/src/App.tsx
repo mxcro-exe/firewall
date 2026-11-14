@@ -19,6 +19,7 @@ import { Traffic } from './pages/Traffic';
 import { Alerts } from './pages/Alerts';
 import { Reports } from './pages/Reports';
 import { Metrics } from './pages/Metrics';
+import { DemoLab } from './pages/DemoLab';
 import { AuditLog } from './pages/AuditLog';
 import { Settings } from './pages/Settings';
 import { Help } from './pages/Help';
@@ -66,6 +67,7 @@ export const AppContent: React.FC = () => {
           <Route path="alerts" element={<Alerts />} />
           <Route path="reports" element={<Reports />} />
           <Route path="metrics" element={<Metrics />} />
+          <Route path="demo-lab" element={<DemoLab />} />
           <Route path="audit-log" element={<AuditLog />} />
           <Route path="settings" element={<Settings />} />
           <Route path="help" element={<Help />} />

@@ -25,3 +25,4 @@ async def log_audit(
     )
     db.add(entry)
     await db.commit()
+

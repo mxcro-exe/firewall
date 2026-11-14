@@ -15,6 +15,18 @@ from app.api.auth import router as auth_router
 from app.api.sites import router as sites_router
 from app.api.settings import router as settings_router
 from app.api.audit import router as audit_router
+from app.api.cve import router as cve_router
+from app.api.inventory import router as inventory_router
+from app.api.rules import router as rules_router
+from app.api.prove_patch import router as prove_patch_router
+from app.api.traffic import router as traffic_router
+from app.api.attack_modules import router as attack_modules_router
+from app.api.agent import router as agent_router
+from app.api.alerts import router as alerts_router
+from app.api.metrics import router as metrics_router
+from app.api.health import router as health_router
+from app.api.reports import router as reports_router
+from app.intel.sync import sync_vulnerability_database
 from app.gateway.proxy import proxy_handler
 
 async def seed_initial_data():
@@ -74,6 +86,9 @@ async def seed_initial_data():
                     blocked_count_24h=0
                 ))
 
+        # 4. Sync Initial CVE Intelligence Cache
+        await sync_vulnerability_database(db)
+
         await db.commit()
 
 @asynccontextmanager
@@ -106,6 +121,17 @@ app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(sites_router, prefix=settings.API_V1_STR)
 app.include_router(settings_router, prefix=settings.API_V1_STR)
 app.include_router(audit_router, prefix=settings.API_V1_STR)
+app.include_router(cve_router, prefix=settings.API_V1_STR)
+app.include_router(inventory_router, prefix=settings.API_V1_STR)
+app.include_router(rules_router, prefix=settings.API_V1_STR)
+app.include_router(prove_patch_router, prefix=settings.API_V1_STR)
+app.include_router(traffic_router, prefix=settings.API_V1_STR)
+app.include_router(attack_modules_router, prefix=settings.API_V1_STR)
+app.include_router(agent_router, prefix=settings.API_V1_STR)
+app.include_router(alerts_router, prefix=settings.API_V1_STR)
+app.include_router(metrics_router, prefix=settings.API_V1_STR)
+app.include_router(health_router, prefix=settings.API_V1_STR)
+app.include_router(reports_router, prefix=settings.API_V1_STR)
 
 @app.get(f"{settings.API_V1_STR}/health", tags=["Health"])
 async def health_check():
@@ -126,3 +152,4 @@ async def proxy_by_site_id(request: Request, site_id: str, path: str = ""):
 async def proxy_by_host(request: Request, path: str = ""):
     """Host/Header resolved reverse proxy route"""
     return await proxy_handler.forward_request(request, path)
+

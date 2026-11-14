@@ -57,3 +57,4 @@ async def update_notifications(
 
     await log_audit(db, current_user.username, current_user.role, "NOTIFICATION_SETTINGS_UPDATED", "System")
     return {"status": "success", "message": "Notification channels updated"}
+

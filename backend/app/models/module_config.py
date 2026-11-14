@@ -13,3 +13,4 @@ class AttackModuleSetting(Base):
     custom_config_json = Column(Text, default="{}")
     blocked_count_24h = Column(Integer, default=0)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
