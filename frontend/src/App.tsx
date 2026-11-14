@@ -6,6 +6,7 @@ import { ModeProvider } from './context/ModeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
 
+import { ProductionDashboardLayout } from './components/dashboard/ProductionDashboardLayout';
 import { Login } from './pages/Login';
 import { Onboarding } from './pages/Onboarding';
 import { Dashboard } from './pages/Dashboard';
@@ -47,7 +48,17 @@ export const AppContent: React.FC = () => {
           }
         />
 
-        {/* Main App Layout */}
+        {/* Root Route: Clean Light Production Dashboard matching exact prompt */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <ProductionDashboardLayout />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Main App Layout for deeper routes */}
         <Route
           path="/"
           element={
@@ -56,7 +67,6 @@ export const AppContent: React.FC = () => {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
           <Route path="sites" element={<Sites />} />
           <Route path="vulnerabilities" element={<Vulnerabilities />} />
           <Route path="rules" element={<Rules />} />
