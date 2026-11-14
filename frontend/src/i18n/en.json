@@ -1,0 +1,90 @@
+{
+  "brand": {
+    "name": "PatchShield",
+    "tagline": "AI-Era Virtual Patching Gateway for SMBs"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "sites": "Protected Sites",
+    "vulnerabilities": "Vulnerabilities",
+    "rules": "Virtual Patch Rules",
+    "provePatch": "Prove-then-Patch",
+    "attackModules": "Attack Modules",
+    "agent": "PatchShield Agent",
+    "traffic": "Live Traffic",
+    "alerts": "Alerts & Notifications",
+    "reports": "Reports & Analytics",
+    "metrics": "PS5 Metrics",
+    "auditLog": "Audit Log",
+    "settings": "Settings",
+    "help": "Help & Support"
+  },
+  "modes": {
+    "simple": "Simple Mode (Shopkeeper)",
+    "advanced": "Advanced Mode (DevOps/Sec)",
+    "monitor": "Monitor Only",
+    "protect": "Protect (Recommended)",
+    "strict": "Strict Enforcement"
+  },
+  "topbar": {
+    "search": "Search routes, rules, CVEs... (Ctrl+K)",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "language": "Language",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "title": "Security Command Center",
+    "subtitle": "Real-time virtual patching & automated attack shield",
+    "totalSites": "Protected Sites",
+    "activePatches": "Active Virtual Patches",
+    "blockedAttacks": "Attacks Blocked (24h)",
+    "healthScore": "Overall Health Score",
+    "recentAlerts": "Recent Alerts",
+    "quickActions": "Quick Controls",
+    "addSite": "Add New Site",
+    "testSim": "Run Attack Simulator",
+    "agentStatus": "Agent Status"
+  },
+  "sites": {
+    "title": "Protected Websites & APIs",
+    "subtitle": "Manage reverse proxy routes and upstream configurations",
+    "addSite": "Add Site",
+    "siteName": "Site Name",
+    "domain": "Domain / Host",
+    "upstream": "Upstream URL",
+    "mode": "Security Mode",
+    "health": "Health Score",
+    "bypassStatus": "Bypass Check",
+    "actions": "Actions",
+    "checkBypass": "Test Direct Bypass",
+    "safe": "Protected (No Bypass)",
+    "vulnerable": "Direct Access Exposed!"
+  },
+  "settings": {
+    "title": "System Settings",
+    "tabs": {
+      "general": "General",
+      "profile": "Profile",
+      "security": "Security (2FA)",
+      "notifications": "Notifications & Telegram",
+      "apiKeys": "API Keys",
+      "appearance": "Appearance & Language",
+      "about": "About & Version"
+    },
+    "save": "Save Changes"
+  },
+  "auth": {
+    "login": "Login to PatchShield",
+    "username": "Username",
+    "password": "Password",
+    "totp": "6-Digit Authenticator Code",
+    "submit": "Sign In",
+    "forgot": "Forgot Password?",
+    "wizardTitle": "PatchShield First-Run Wizard",
+    "wizardDesc": "Get your business protected in under 3 minutes"
+  }
+}
