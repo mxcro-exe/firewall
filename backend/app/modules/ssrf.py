@@ -57,3 +57,4 @@ class SSRFDefenseModule:
         return False, "", {}
 
 ssrf_module = SSRFDefenseModule()
+

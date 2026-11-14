@@ -41,3 +41,4 @@ class RequestSmugglingDefenseModule:
         return False, "", {}
 
 smuggling_module = RequestSmugglingDefenseModule()
+

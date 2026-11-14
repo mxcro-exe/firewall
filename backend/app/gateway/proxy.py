@@ -16,6 +16,9 @@ from app.modules.manager import defense_manager
 from app.ml.model_runner import ml_subsystem
 from app.gateway.honeypot import is_honeypot_path
 from app.gateway.geoip import geoip_filter
+from app.gateway.streaming_proxy import streaming_proxy
+from app.gateway.packet_filter import packet_filter
+from app.core.kv_cache import kv_cache
 from app.core.database import AsyncSessionLocal
 
 # Hop-by-hop headers that should not be forwarded
@@ -83,12 +86,36 @@ class ReverseProxyHandler:
                     media_type="application/json"
                 )
 
-            body = await request.body()
-            body_text = body.decode("utf-8", errors="ignore")
-            client_ip = request.client.host if request.client else "127.0.0.1"
+            client_ip = streaming_proxy.extract_client_ip(request)
+            user_agent = request.headers.get("user-agent", "")
             clean_path = f"/{path.lstrip('/')}"
             query_str = request.url.query
-            user_agent = request.headers.get("user-agent", "")
+
+            # --- TIER 0: LOW-LEVEL PACKET FILTER & INSTANT TCP DROP ---
+            should_drop, drop_reason = packet_filter.should_instant_drop(client_ip, user_agent)
+            if should_drop:
+                return packet_filter.create_instant_drop_response(drop_reason)
+
+            # --- TIER 0.5: MICROSECOND IN-MEMORY RATE LIMITER (SLIDING WINDOW) ---
+            is_allowed, count, retry_after = kv_cache.check_sliding_window_rate_limit(
+                key=f"ratelimit:{client_ip}",
+                max_requests=100,
+                window_seconds=60.0
+            )
+            if not is_allowed:
+                return Response(
+                    content=json.dumps({
+                        "error": "Rate limit exceeded (Max 100 req/min)",
+                        "client_ip": client_ip,
+                        "retry_after_seconds": round(retry_after, 1)
+                    }),
+                    status_code=429,
+                    headers={"Retry-After": str(int(retry_after))},
+                    media_type="application/json"
+                )
+
+            body = await request.body()
+            body_text = body.decode("utf-8", errors="ignore")
 
             # --- PRE-FILTER: HONEYPOT DECEPTION TRAP ---
             is_honey, honey_msg = is_honeypot_path(clean_path)
@@ -334,19 +361,14 @@ class ReverseProxyHandler:
             req_headers["X-PatchShield-Gateway"] = "Active"
 
             try:
-                upstream_resp = await self.client.request(
-                    method=request.method,
-                    url=target_url,
-                    headers=req_headers,
-                    content=body
+                # Track 1: Non-blocking streaming response with connection pooling
+                streamed_resp = await streaming_proxy.stream_upstream(
+                    request=request,
+                    target_url=target_url,
+                    body_bytes=body
                 )
 
-                resp_headers = {}
-                for k, v in upstream_resp.headers.items():
-                    if k.lower() not in HOP_BY_HOP_HEADERS:
-                        resp_headers[k] = v
-
-                # Normal traffic logging with ML evaluation
+                # Log successful traffic
                 traffic_log = TrafficLog(
                     site_id=site.id,
                     timestamp=datetime.utcnow(),
@@ -359,17 +381,12 @@ class ReverseProxyHandler:
                     ml_score=ml_res["confidence"] if ml_res["prediction"] != "Benign" else 0.0,
                     ml_prediction=ml_res["prediction"],
                     rule_action="PASSED",
-                    response_status=upstream_resp.status_code
+                    response_status=streamed_resp.status_code
                 )
                 db.add(traffic_log)
                 await db.commit()
 
-                return Response(
-                    content=upstream_resp.content,
-                    status_code=upstream_resp.status_code,
-                    headers=resp_headers,
-                    media_type=upstream_resp.headers.get("content-type")
-                )
+                return streamed_resp
 
             except httpx.ConnectError:
                 return Response(

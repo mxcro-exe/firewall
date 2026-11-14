@@ -46,3 +46,4 @@ class GraphQLDefenseModule:
         return False, "", {}
 
 graphql_module = GraphQLDefenseModule()
+

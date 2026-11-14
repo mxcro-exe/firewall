@@ -79,3 +79,4 @@ for lang in ["en", "ta", "hi"]:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 print("Catalogs updated and mirrored successfully!")
+

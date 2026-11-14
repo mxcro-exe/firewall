@@ -34,3 +34,4 @@ class OpenRedirectDefenseModule:
         return False, "", {}
 
 redirect_module = OpenRedirectDefenseModule()
+

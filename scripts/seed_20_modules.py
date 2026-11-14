@@ -38,3 +38,4 @@ conn.commit()
 count = cur.execute('SELECT COUNT(*) FROM attack_module_settings').fetchone()[0]
 print(f"Total attack defense modules active in database: {count}")
 conn.close()
+

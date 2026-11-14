@@ -37,3 +37,4 @@ class InsecureDeserializationDefenseModule:
         return False, "", {}
 
 deserial_module = InsecureDeserializationDefenseModule()
+

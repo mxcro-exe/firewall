@@ -43,3 +43,4 @@ class MassAssignmentDefenseModule:
         return False, "", {}
 
 mass_assign_module = MassAssignmentDefenseModule()
+

@@ -3,6 +3,7 @@ import urllib.parse
 import json
 from typing import List, Optional, Tuple, Dict, Any
 from app.rules.normalizer import normalize_string
+from app.rules.redos_guard import ReDoSStaticAnalyzer, safe_regex_matcher
 from app.models.rule import VirtualPatchRule
 
 class VirtualPatchEngine:
@@ -11,6 +12,11 @@ class VirtualPatchEngine:
 
     def get_compiled_pattern(self, pattern_str: str) -> Optional[re.Pattern]:
         if pattern_str not in self._compiled_cache:
+            # 1. Static ReDoS AST safety check
+            is_safe, err = ReDoSStaticAnalyzer.analyze_ast(pattern_str)
+            if not is_safe:
+                # Unsafe pattern rejected to prevent CPU starvation
+                return None
             try:
                 self._compiled_cache[pattern_str] = re.compile(pattern_str, re.IGNORECASE)
             except re.error:
@@ -26,7 +32,7 @@ class VirtualPatchEngine:
         rules: List[VirtualPatchRule]
     ) -> Tuple[Optional[VirtualPatchRule], Optional[Dict[str, Any]]]:
         """
-        Evaluate incoming request against active scoped virtual patch rules.
+        Evaluate incoming request against active scoped virtual patch rules with ReDoS safeguards.
         Returns: (matched_rule, match_context) or (None, None)
         """
         clean_path = f"/{path.lstrip('/')}"
@@ -43,30 +49,24 @@ class VirtualPatchEngine:
 
             # 2. Match Endpoint Path (Prefix or Exact match)
             rule_path = f"/{rule.endpoint_path.lstrip('/')}"
-            # Check prefix or equality
             if not (clean_path == rule_path or clean_path.startswith(rule_path.rstrip('/') + '/')):
                 continue
 
             # 3. Extract Target Value to inspect
             target_value = ""
             if rule.target_param:
-                # Look in query params
                 if rule.target_param in query_params:
                     target_value = " ".join(query_params[rule.target_param])
-                # Look in body (JSON or form-encoded)
                 elif body_text:
                     try:
-                        # Attempt JSON parse
                         body_json = json.loads(body_text)
                         if isinstance(body_json, dict) and rule.target_param in body_json:
                             target_value = str(body_json[rule.target_param])
                     except Exception:
-                        # Fallback to URL-encoded form parse
                         form_params = urllib.parse.parse_qs(body_text, keep_blank_values=True)
                         if rule.target_param in form_params:
                             target_value = " ".join(form_params[rule.target_param])
             else:
-                # If no specific param is scoped, inspect query string + body text
                 target_value = f"{query_string} {body_text}"
 
             if not target_value:
@@ -75,19 +75,20 @@ class VirtualPatchEngine:
             # 4. Normalize & Unpack Evasions
             normalized_value, obfuscated, techniques = normalize_string(target_value)
 
-            # 5. Pattern Match
+            # 5. Pattern Match with ReDoS Timeout Guard (50ms limit)
             pattern = self.get_compiled_pattern(rule.pattern_value)
             if not pattern:
                 continue
 
-            match = pattern.search(normalized_value)
-            if match:
+            is_matched, match, elapsed_ms = safe_regex_matcher.match_with_timeout(pattern, normalized_value)
+            if is_matched and match:
                 return rule, {
                     "matched_text": match.group(0),
                     "target_param": rule.target_param or "ALL",
                     "obfuscation_detected": obfuscated,
                     "evasion_techniques": techniques,
-                    "rule_version": rule.version
+                    "rule_version": rule.version,
+                    "scan_latency_ms": round(elapsed_ms, 3)
                 }
 
         return None, None

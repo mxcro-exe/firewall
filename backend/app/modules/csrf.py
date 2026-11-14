@@ -30,3 +30,4 @@ class CSRFDefenseModule:
         return False, "", {}
 
 csrf_module = CSRFDefenseModule()
+
