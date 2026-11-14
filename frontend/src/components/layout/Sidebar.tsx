@@ -1,58 +1,61 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Shield, LayoutDashboard, Globe, ShieldAlert, FileCode,
   GitCompare, Flame, Bot, Activity, Bell, FileText,
-  BarChart3, History, Settings, HelpCircle, CheckCircle2, Sparkles, ChevronDown, ChevronRight
+  BarChart3, History, Settings, HelpCircle, Sparkles,
+  ChevronDown, ChevronRight
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useMode } from '../../context/ModeContext';
 
 interface SidebarProps {
-  isCollapsed: boolean;
+  isCollapsed?: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false }) => {
   const { language, t } = useLanguage();
-  const { dashboardMode, setDashboardMode } = useMode();
+  const { dashboardMode } = useMode();
+  const navigate = useNavigate();
   const [showAdvancedInSimple, setShowAdvancedInSimple] = useState(false);
 
   // Shopkeeper simple navigation items
   const shopkeeperNav = [
-    { to: '/', label: language === 'ta' ? 'கடை பாதுகாப்பு (Dashboard)' : language === 'hi' ? 'दुकान सुरक्षा (Dashboard)' : 'Store Protection', icon: LayoutDashboard },
-    { to: '/sites', label: language === 'ta' ? 'எனது இணையதளங்கள்' : language === 'hi' ? 'मेरी वेबसाइटें' : 'My Websites', icon: Globe },
-    { to: '/demo-lab', label: language === 'ta' ? 'பாதுகாப்பு சோதனை (Live Demo)' : language === 'hi' ? 'सुरक्षा परीक्षण (Live Demo)' : 'Live Defense Demo', icon: Sparkles, badge: 'DEMO' },
-    { to: '/alerts', label: language === 'ta' ? 'மொபைல் எச்சரிக்கைகள்' : language === 'hi' ? 'मोबाइल सूचनाएं' : 'Store Alerts', icon: Bell },
-    { to: '/reports', label: language === 'ta' ? 'கடை அறிக்கைகள் (PDF)' : language === 'hi' ? 'दुकान रिपोर्ट (PDF)' : 'Safety Reports', icon: FileText },
+    { to: '/', label: language === 'ta' ? 'கடை பாதுகாப்பு' : language === 'hi' ? 'दुकान सुरक्षा' : 'Store Protection', icon: LayoutDashboard, exact: true },
+    { to: '/sites', label: language === 'ta' ? 'இணையதளங்கள்' : language === 'hi' ? 'वेबसाइटें' : 'My Websites', icon: Globe },
+    { to: '/demo-lab', label: language === 'ta' ? 'பாதுகாப்பு சோதனை' : language === 'hi' ? 'सुरक्षा परीक्षण' : 'Live Defense Demo', icon: Sparkles, badge: 'DEMO' },
+    { to: '/alerts', label: language === 'ta' ? 'எச்சரிக்கைகள்' : language === 'hi' ? 'सूचनाएं' : 'Store Alerts', icon: Bell },
+    { to: '/reports', label: language === 'ta' ? 'அறிக்கைகள் (PDF)' : language === 'hi' ? 'रिपोर्ट (PDF)' : 'Safety Reports', icon: FileText, badge: 'PDF' },
     { to: '/settings', label: t('nav.settings'), icon: Settings },
     { to: '/help', label: t('nav.help'), icon: HelpCircle },
   ];
 
-  // SecOps advanced navigation items
+  // Advanced SecOps items
   const advancedNav = [
+    { to: '/attack-modules', label: language === 'ta' ? '20 தாக்குதல் கவசங்கள்' : language === 'hi' ? '20 सुरक्षा कवच' : '20 Attack Shields', icon: Flame, badge: '20 Def' },
+    { to: '/prove-patch', label: 'Prove-then-Patch', icon: GitCompare, badge: 'PTP' },
+    { to: '/rules', label: 'ReDoS Rules', icon: FileCode },
+    { to: '/traffic', label: language === 'ta' ? 'போக்குவரத்து' : language === 'hi' ? 'ट्रैफ़िक' : 'Proxy Streaming', icon: Activity },
     { to: '/vulnerabilities', label: t('nav.vulnerabilities'), icon: ShieldAlert },
-    { to: '/rules', label: t('nav.rules'), icon: FileCode },
-    { to: '/prove-patch', label: t('nav.provePatch'), icon: GitCompare, badge: 'PTP' },
-    { to: '/attack-modules', label: t('nav.attackModules'), icon: Flame, badge: '20 Def' },
     { to: '/agent', label: t('nav.agent'), icon: Bot, badge: 'AI' },
-    { to: '/traffic', label: t('nav.traffic'), icon: Activity },
     { to: '/metrics', label: t('nav.metrics'), icon: BarChart3, badge: 'PS5' },
     { to: '/audit-log', label: t('nav.auditLog'), icon: History },
   ];
 
+  // Full SecOps list for advanced mode
   const fullSecOpsNav = [
-    { to: '/', label: t('nav.dashboard'), icon: LayoutDashboard },
+    { to: '/', label: language === 'ta' ? 'கட்டுப்பாட்டு தளம்' : language === 'hi' ? 'सुरक्षा नियंत्रण' : 'Security Deck', icon: LayoutDashboard, exact: true },
+    { to: '/attack-modules', label: language === 'ta' ? '20 தாக்குதல் கவசங்கள்' : language === 'hi' ? '20 सुरक्षा कवच' : '20 Attack Shields', icon: Flame, badge: '20 Def' },
+    { to: '/prove-patch', label: 'Prove-then-Patch', icon: GitCompare, badge: 'PTP' },
+    { to: '/demo-lab', label: language === 'ta' ? 'பாதுகாப்பு சோதனை' : language === 'hi' ? 'लाइव परीक्षण' : 'Live Demo Lab', icon: Sparkles, badge: 'DEMO' },
+    { to: '/traffic', label: language === 'ta' ? 'போக்குவரத்து' : language === 'hi' ? 'लाइव ट्रैफ़िक' : 'Proxy Streaming', icon: Activity },
+    { to: '/rules', label: 'ReDoS Rules', icon: FileCode },
     { to: '/sites', label: t('nav.sites'), icon: Globe },
     { to: '/vulnerabilities', label: t('nav.vulnerabilities'), icon: ShieldAlert },
-    { to: '/rules', label: t('nav.rules'), icon: FileCode },
-    { to: '/prove-patch', label: t('nav.provePatch'), icon: GitCompare, badge: 'PTP' },
-    { to: '/attack-modules', label: t('nav.attackModules'), icon: Flame, badge: '20 Def' },
     { to: '/agent', label: t('nav.agent'), icon: Bot, badge: 'AI' },
-    { to: '/traffic', label: t('nav.traffic'), icon: Activity },
     { to: '/alerts', label: t('nav.alerts'), icon: Bell },
     { to: '/reports', label: t('nav.reports'), icon: FileText },
     { to: '/metrics', label: t('nav.metrics'), icon: BarChart3, badge: 'PS5' },
-    { to: '/demo-lab', label: t('nav.demoLab'), icon: Sparkles, badge: 'DEMO' },
     { to: '/audit-log', label: t('nav.auditLog'), icon: History },
     { to: '/settings', label: t('nav.settings'), icon: Settings },
     { to: '/help', label: t('nav.help'), icon: HelpCircle },
@@ -60,172 +63,208 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
 
   return (
     <aside
-      className={`fixed lg:static inset-y-0 left-0 z-40 flex flex-col bg-obsidian-950/85 backdrop-blur-2xl border-r border-cyanteal-500/20 transition-all duration-300 ease-in-out ${
-        isCollapsed ? 'w-20' : 'w-64'
+      className={`fixed lg:sticky top-0 inset-y-0 left-0 z-40 flex flex-col justify-between bg-white/95 dark:bg-obsidian-950/90 backdrop-blur-xl border-r border-slate-200 dark:border-cyanteal-500/25 shadow-sm dark:shadow-2xl transition-all duration-200 ease-in-out h-screen flex-shrink-0 ${
+        isCollapsed ? 'w-16' : 'w-[230px]'
       }`}
     >
-      {/* Brand Header */}
-      <div className="h-16 flex items-center px-4 border-b border-cyanteal-500/20 space-x-3 bg-obsidian-900/40">
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-copper-500 via-deepteal-700 to-cyanteal-500 flex items-center justify-center shadow-lg shadow-copper-500/20 flex-shrink-0 border border-white/10">
-          <Shield className="w-5 h-5 text-cream-300" />
+      <div className="flex flex-col min-h-0 flex-1">
+        {/* Compact Brand Header (h-14) */}
+        <div 
+          onClick={() => navigate('/')}
+          className="h-14 flex items-center px-3.5 border-b border-slate-200 dark:border-cyanteal-500/20 space-x-2.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-deepteal-700/20 transition-colors flex-shrink-0"
+        >
+          {/* Brand Squircle */}
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-copper-500 via-deepteal-700 to-emeraldink-900 flex items-center justify-center text-white shadow-xs border border-copper-400/30 flex-shrink-0">
+            <Shield className="w-4 h-4 text-champagne-300" />
+          </div>
+          {!isCollapsed && (
+            <div className="overflow-hidden">
+              <h1 className="font-bold text-xs tracking-tight text-slate-900 dark:text-champagne-300 truncate">
+                {language === 'ta' ? 'PatchShield' : language === 'hi' ? 'PatchShield' : 'PatchShield'}
+              </h1>
+              <p className="text-[10px] font-mono text-teal-700 dark:text-iceteal-300 font-semibold truncate">
+                v2.0 WAF Gateway
+              </p>
+            </div>
+          )}
         </div>
-        {!isCollapsed && (
-          <div className="overflow-hidden">
-            <h1 className="font-bold text-sm tracking-wide text-cream-300 truncate">
-              {language === 'ta' ? 'பேட்ச்ஷீல்ட்' : language === 'hi' ? 'पैचशील्ड' : 'PatchShield'}
-            </h1>
-            <p className="text-[10px] text-iceteal-300 font-mono truncate">
-              v1.0 Virtual Patching
-            </p>
-          </div>
-        )}
-      </div>
 
-      {/* Navigation List */}
-      <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
-        {dashboardMode === 'simple' ? (
-          <>
-            {!isCollapsed && (
-              <div className="px-3 pt-1 pb-2 flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-copper-400">
-                  {language === 'ta' ? '🏪 எளிய வணிகர் மெனு' : language === 'hi' ? '🏪 व्यापारी मेनू' : '🏪 Shopkeeper Menu'}
-                </span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-copper-500/20 text-copper-300 font-semibold border border-copper-500/30">
-                  SIMPLE
-                </span>
-              </div>
-            )}
-
-            {shopkeeperNav.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  title={isCollapsed ? item.label : undefined}
-                  className={({ isActive }) =>
-                    `flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 ${
-                      isActive
-                        ? 'bg-gradient-to-r from-copper-500/80 to-copper-600/80 text-cream-100 shadow-md shadow-copper-500/20 border border-copper-400/40 font-bold'
-                        : 'text-slate-300 hover:text-cream-200 hover:bg-copper-500/10'
-                    } ${isCollapsed ? 'justify-center px-0' : ''}`
-                  }
-                >
-                  <Icon className="w-4 h-4 flex-shrink-0 text-copper-300" />
-                  {!isCollapsed && (
-                    <div className="flex-1 flex items-center justify-between truncate">
-                      <span className="truncate">{item.label}</span>
-                      {item.badge && (
-                        <span className="ml-1 text-[9px] px-1.5 py-0.5 rounded-full bg-copper-950 text-copper-300 border border-copper-500/30 font-mono">
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </NavLink>
-              );
-            })}
-
-            {/* SecOps Tools Accordion for Simple Mode */}
-            {!isCollapsed ? (
-              <div className="pt-3 border-t border-cyanteal-500/15">
-                <button
-                  onClick={() => setShowAdvancedInSimple(!showAdvancedInSimple)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-semibold text-slate-400 hover:text-cream-200 hover:bg-cyanteal-500/10 transition-colors"
-                >
-                  <span className="flex items-center space-x-1.5">
-                    <span>⚡</span>
-                    <span>{language === 'ta' ? 'தொழில்நுட்ப கருவிகள் (SecOps)' : language === 'hi' ? 'उन्नत सुरक्षा उपकरण' : 'Advanced SecOps Tools'}</span>
+        {/* Compact Navigation List */}
+        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
+          {dashboardMode === 'simple' ? (
+            <>
+              {!isCollapsed && (
+                <div className="px-2 pt-1 pb-1 flex items-center justify-between">
+                  <span className="text-[9px] uppercase tracking-wider font-bold text-copper-600 dark:text-copper-400">
+                    {language === 'ta' ? '🏪 எளிய மெனு' : language === 'hi' ? '🏪 सरल मेनू' : '🏪 Shopkeeper'}
                   </span>
-                  {showAdvancedInSimple ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                </button>
-                {showAdvancedInSimple && (
-                  <div className="mt-1 pl-2 space-y-1">
-                    {advancedNav.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <NavLink
-                          key={item.to}
-                          to={item.to}
-                          className={({ isActive }) =>
-                            `flex items-center space-x-2.5 px-2.5 py-2 rounded-lg text-[11px] transition-all ${
-                              isActive
-                                ? 'bg-deepteal-700/60 text-cream-200 font-semibold'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-                            }`
-                          }
-                        >
-                          <Icon className="w-3.5 h-3.5 text-iceteal-300" />
-                          <span className="truncate">{item.label}</span>
-                        </NavLink>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ) : null}
-          </>
-        ) : (
-          <>
-            {!isCollapsed && (
-              <div className="px-3 pt-1 pb-2 flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-iceteal-300">
-                  {language === 'ta' ? '⚡ செக்ஆப்ஸ் மெனு' : language === 'hi' ? '⚡ सेकोप्स मेनू' : '⚡ SecOps Command'}
-                </span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-deepteal-700 text-iceteal-200 font-semibold border border-iceteal-300/30">
-                  ADVANCED
-                </span>
-              </div>
-            )}
-            {fullSecOpsNav.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  title={isCollapsed ? item.label : undefined}
-                  className={({ isActive }) =>
-                    `flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 ${
-                      isActive
-                        ? 'bg-gradient-to-r from-deepteal-700/80 to-cyanteal-500/60 text-cream-200 shadow-md shadow-cyanteal-500/20 border border-iceteal-300/30'
-                        : 'text-slate-400 hover:text-cream-300 hover:bg-cyanteal-500/10'
-                    } ${isCollapsed ? 'justify-center px-0' : ''}`
-                  }
-                >
-                  <Icon className="w-4 h-4 flex-shrink-0" />
-                  {!isCollapsed && (
-                    <div className="flex-1 flex items-center justify-between truncate">
-                      <span className="truncate">{item.label}</span>
-                      {item.badge && (
-                        <span className="ml-1 text-[9px] px-1.5 py-0.5 rounded-full bg-obsidian-850 text-iceteal-300 border border-cyanteal-500/30 font-mono">
-                          {item.badge}
-                        </span>
-                      )}
+                  <span className="text-[8px] px-1.5 py-0.2 rounded font-mono bg-copper-50 dark:bg-copper-500/20 text-copper-700 dark:text-copper-300 font-bold border border-copper-200 dark:border-copper-500/30">
+                    SIMPLE
+                  </span>
+                </div>
+              )}
+
+              {shopkeeperNav.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.exact}
+                    title={isCollapsed ? item.label : undefined}
+                    className={({ isActive }) =>
+                      `flex items-center space-x-2.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                        isActive
+                          ? 'bg-copper-600 text-white shadow-xs font-bold'
+                          : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-champagne-200 hover:bg-slate-100 dark:hover:bg-deepteal-700/25'
+                      } ${isCollapsed ? 'justify-center px-0' : ''}`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-iceteal-300'}`} />
+                        {!isCollapsed && (
+                          <div className="flex-1 flex items-center justify-between truncate">
+                            <span className="truncate">{item.label}</span>
+                            {item.badge && (
+                              <span className={`ml-1 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                                isActive 
+                                  ? 'bg-black/25 text-white' 
+                                  : 'bg-slate-100 dark:bg-obsidian-850 text-slate-600 dark:text-iceteal-300 border border-slate-200 dark:border-cyanteal-500/30'
+                              }`}>
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </NavLink>
+                );
+              })}
+
+              {/* Advanced Accordion in Simple Mode */}
+              {!isCollapsed && (
+                <div className="pt-1.5 mt-1 border-t border-slate-200 dark:border-cyanteal-500/20">
+                  <button
+                    onClick={() => setShowAdvancedInSimple(!showAdvancedInSimple)}
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-slate-600 dark:text-iceteal-300 hover:text-slate-900 dark:hover:text-champagne-200 hover:bg-slate-100 dark:hover:bg-deepteal-700/25 transition-colors"
+                  >
+                    <span className="flex items-center space-x-1.5">
+                      <span>⚡</span>
+                      <span>{language === 'ta' ? 'கருவிகள்' : language === 'hi' ? 'उपकरण' : 'SecOps Tools'}</span>
+                    </span>
+                    {showAdvancedInSimple ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                  </button>
+                  {showAdvancedInSimple && (
+                    <div className="mt-0.5 space-y-0.5 pl-1.5">
+                      {advancedNav.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <NavLink
+                            key={item.to}
+                            to={item.to}
+                            className={({ isActive }) =>
+                              `flex items-center space-x-2 px-2 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                                isActive
+                                  ? 'bg-teal-50 dark:bg-deepteal-700/60 text-teal-800 dark:text-champagne-200 font-bold border border-teal-200 dark:border-iceteal-300/30'
+                                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-champagne-300 hover:bg-slate-100 dark:hover:bg-deepteal-700/20'
+                              }`
+                            }
+                          >
+                            <Icon className="w-3 h-3 text-slate-500 dark:text-iceteal-300" />
+                            <span className="truncate">{item.label}</span>
+                          </NavLink>
+                        );
+                      })}
                     </div>
                   )}
-                </NavLink>
-              );
-            })}
-          </>
-        )}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {!isCollapsed && (
+                <div className="px-2 pt-1 pb-1 flex items-center justify-between">
+                  <span className="text-[9px] uppercase tracking-wider font-bold text-copper-600 dark:text-copper-400">
+                    {language === 'ta' ? '⚡ செக்ஆப்ஸ் மெனு' : language === 'hi' ? '⚡ सेकोप्स मेनू' : '⚡ SecOps Command'}
+                  </span>
+                  <span className="text-[8px] px-1.5 py-0.2 rounded font-mono bg-teal-50 dark:bg-deepteal-700 text-teal-800 dark:text-iceteal-200 font-bold border border-teal-200 dark:border-iceteal-300/30">
+                    ADVANCED
+                  </span>
+                </div>
+              )}
+
+              {fullSecOpsNav.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.exact}
+                    title={isCollapsed ? item.label : undefined}
+                    className={({ isActive }) =>
+                      `flex items-center space-x-2.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                        isActive
+                          ? 'bg-copper-600 text-white shadow-xs font-bold'
+                          : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-champagne-200 hover:bg-slate-100 dark:hover:bg-deepteal-700/25'
+                      } ${isCollapsed ? 'justify-center px-0' : ''}`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-iceteal-300'}`} />
+                        {!isCollapsed && (
+                          <div className="flex-1 flex items-center justify-between truncate">
+                            <span className="truncate">{item.label}</span>
+                            {item.badge && (
+                              <span className={`ml-1 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                                isActive 
+                                  ? 'bg-black/25 text-white' 
+                                  : 'bg-slate-100 dark:bg-obsidian-850 text-slate-600 dark:text-iceteal-300 border border-slate-200 dark:border-cyanteal-500/30'
+                              }`}>
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </NavLink>
+                );
+              })}
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Footer Gateway Engine Status */}
-      {!isCollapsed && (
-        <div className="p-3 border-t border-cyanteal-500/20 bg-obsidian-950/60">
-          <div className="p-2.5 rounded-2xl glass-panel text-[11px] text-slate-300 space-y-1.5 border border-cyanteal-500/25">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">Gateway Status</span>
-              <span className="flex items-center text-iceteal-300 text-[10px] font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse" />
-                Active (:8000)
-              </span>
+      {/* Compact User Account Settings / Footer */}
+      {!isCollapsed ? (
+        <div className="p-2 border-t border-slate-200 dark:border-cyanteal-500/20 flex-shrink-0">
+          <div 
+            onClick={() => navigate('/settings')}
+            className="p-2 rounded-xl bg-slate-50 dark:bg-obsidian-900/80 hover:bg-slate-100 dark:hover:bg-deepteal-700/30 border border-slate-200 dark:border-cyanteal-500/25 flex items-center justify-between cursor-pointer transition-all"
+          >
+            <div className="flex items-center space-x-2 overflow-hidden">
+              <div className="w-6 h-6 rounded-md bg-gradient-to-tr from-copper-500 to-deepteal-700 text-white flex items-center justify-center font-bold text-[10px] flex-shrink-0">
+                PS
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-[11px] font-bold text-slate-900 dark:text-champagne-300 truncate">SecOps Lead</p>
+                <p className="text-[9px] text-slate-500 dark:text-iceteal-300/80 truncate">admin@patchshield</p>
+              </div>
             </div>
-            <div className="flex items-center justify-between text-[10px]">
-              <span className="text-slate-400">ML Fallback</span>
-              <span className="text-cream-300 font-mono">23-feat RF Ready</span>
-            </div>
+            <Settings className="w-3.5 h-3.5 text-slate-400 dark:text-iceteal-300 hover:text-copper-600 flex-shrink-0 transition-colors" />
           </div>
+        </div>
+      ) : (
+        <div className="p-2 border-t border-slate-200 dark:border-cyanteal-500/20 flex justify-center">
+          <button 
+            onClick={() => navigate('/settings')} 
+            className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-obsidian-900 hover:bg-slate-200 dark:hover:bg-deepteal-700/30 flex items-center justify-center text-slate-600 dark:text-iceteal-300 hover:text-copper-600 transition-colors"
+          >
+            <Settings className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
     </aside>

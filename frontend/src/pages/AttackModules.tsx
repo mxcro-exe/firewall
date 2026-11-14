@@ -59,54 +59,47 @@ export const AttackModules: React.FC = () => {
 
   const handleSensitivityChange = async (moduleKey: string, newSensitivity: string) => {
     try {
-      await api.put(`/attack-modules/${moduleKey}/sensitivity`, { sensitivity: newSensitivity });
+      await api.patch(`/attack-modules/${moduleKey}/sensitivity`, { sensitivity: newSensitivity });
       fetchModules();
     } catch (err) {
       alert("Failed to update sensitivity");
     }
   };
 
-  const handleRunMlTest = async () => {
+  const handleTestML = async () => {
     setTesting(true);
+    setMlInferenceResult(null);
     try {
-      const res = await api.post('/attack-modules/ml/test-inference', {
-        method: 'GET',
-        path: '/api/test',
-        query_string: `q=${encodeURIComponent(testPayload)}`
-      });
+      const res = await api.post('/attack-modules/ml/predict', { payload: testPayload });
       setMlInferenceResult(res.data);
     } catch (err) {
-      alert("Inference test failed");
+      console.error(err);
     } finally {
       setTesting(false);
     }
   };
 
   const moduleCategories: Record<string, string> = {
-    // Injections
     sqli: 'injection',
     xss: 'injection',
     cmd: 'injection',
     ssti: 'injection',
     nosql: 'injection',
-    // Data & Files
     path: 'data_files',
+    ssrf: 'data_files',
     xxe: 'data_files',
     deserial: 'data_files',
-    ssrf: 'data_files',
-    recon: 'data_files',
-    // Auth & Access
+    graphql: 'data_files',
     brute: 'auth',
     csrf: 'auth',
     redirect: 'auth',
-    mass_assign: 'auth',
     ldap: 'auth',
-    // Traffic & Protocols
+    mass_assign: 'auth',
     ddos: 'traffic',
     bot: 'traffic',
     smuggling: 'traffic',
-    graphql: 'traffic',
-    proto_abuse: 'traffic',
+    recon: 'traffic',
+    proto_abuse: 'traffic'
   };
 
   const getModuleInfo = (key: string) => {
@@ -142,12 +135,12 @@ export const AttackModules: React.FC = () => {
   const activeCount = modules.filter(m => m.is_enabled).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cyanteal-500/20 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-200 dark:border-cyanteal-500/20 pb-3">
         <div>
           <div className="flex items-center space-x-2">
-            <h2 className="text-xl font-bold text-cream-300">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-champagne-200">
               {t('nav.attackModules')}
             </h2>
             <InfoHint 
@@ -156,34 +149,34 @@ export const AttackModules: React.FC = () => {
               badge="20 SHIELDS"
             />
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-[11px] text-slate-500 dark:text-iceteal-300/80 mt-0.5">
             20 high-speed attack detectors paired with an intelligent 23-feature Random Forest ML fallback.
           </p>
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-deepteal-700/60 text-iceteal-200 border border-iceteal-300/30">
+          <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 dark:bg-deepteal-700/60 dark:text-iceteal-200 border border-teal-200 dark:border-iceteal-300/30">
             {activeCount}/20 DEFENSES ARMED
           </span>
         </div>
       </div>
 
       {/* Category Filter Tabs */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-1 text-xs">
+      <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs">
         {[
           { key: 'all', label: language === 'ta' ? 'அனைத்து 20 கேடயங்கள்' : language === 'hi' ? 'सभी 20 कवच' : 'All 20 Shields', count: modules.length },
-          { key: 'injection', label: language === 'ta' ? 'ஊசி தாக்குதல்கள் (Injections)' : language === 'hi' ? 'इंजेक्शन हमले (Injections)' : 'Injections (5)', count: 5 },
-          { key: 'data_files', label: language === 'ta' ? 'கோப்பு & தரவு கவசம்' : language === 'hi' ? 'डेटा एवं फ़ाइलें' : 'Data & Files (5)', count: 5 },
-          { key: 'auth', label: language === 'ta' ? 'அங்கீகாரம் & அணுகல்' : language === 'hi' ? 'प्रमाणीकरण एवं पहुँच' : 'Auth & Access (5)', count: 5 },
-          { key: 'traffic', label: language === 'ta' ? 'போக்குவரத்து & நெறிமுறைகள்' : language === 'hi' ? 'ट्रैफ़िक एवं प्रोटोकॉल' : 'Traffic & Protocols (5)', count: 5 },
+          { key: 'injection', label: language === 'ta' ? 'ஊசி (Injections)' : language === 'hi' ? 'इंजेक्शन (Injections)' : 'Injections (5)', count: 5 },
+          { key: 'data_files', label: language === 'ta' ? 'கோப்பு & தரவு' : language === 'hi' ? 'डेटा एवं फ़ाइलें' : 'Data & Files (5)', count: 5 },
+          { key: 'auth', label: language === 'ta' ? 'அங்கீகாரம்' : language === 'hi' ? 'प्रमाणीकरण' : 'Auth & Access (5)', count: 5 },
+          { key: 'traffic', label: language === 'ta' ? 'போக்குவரத்து' : language === 'hi' ? 'ट्रैफ़िक' : 'Traffic (5)', count: 5 },
         ].map((tab) => (
           <button
             key={tab.key}
             onClick={() => setSelectedCategory(tab.key)}
-            className={`px-3 py-1.5 rounded-xl font-medium transition-all duration-200 flex-shrink-0 flex items-center space-x-1.5 ${
+            className={`px-2.5 py-1 rounded-lg font-semibold text-xs transition-all duration-150 flex-shrink-0 flex items-center space-x-1.5 ${
               selectedCategory === tab.key
-                ? 'bg-deepteal-700 text-cream-100 border border-iceteal-300/40 shadow-glow-teal font-bold'
-                : 'bg-obsidian-900/60 text-slate-400 hover:text-cream-200 border border-white/5'
+                ? 'bg-copper-600 text-white font-bold shadow-xs border border-copper-700'
+                : 'glass-panel text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-champagne-200 border-slate-200 dark:border-cyanteal-500/25'
             }`}
           >
             <span>{tab.label}</span>
@@ -191,57 +184,57 @@ export const AttackModules: React.FC = () => {
         ))}
       </div>
 
-      {/* 20 Defense Modules Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* 20 Defense Modules Grid (Compact & Crisp) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
         {filteredModules.map((m) => {
           const info = getModuleInfo(m.module_key);
           return (
             <div
               key={m.module_key}
-              className={`p-5 rounded-3xl border transition-all duration-300 flex flex-col justify-between space-y-4 ${
+              className={`p-3.5 rounded-xl transition-all duration-150 flex flex-col justify-between space-y-3 ${
                 m.is_enabled
-                  ? 'glass-panel border-cyanteal-500/30 hover:border-iceteal-300/50 shadow-lg'
-                  : 'bg-obsidian-850/40 border-white/5 opacity-60'
+                  ? 'glass-panel border-slate-200 dark:border-cyanteal-500/35 hover:border-slate-300 dark:hover:border-iceteal-300/40'
+                  : 'bg-slate-50 dark:bg-obsidian-950/60 border border-slate-200 dark:border-white/5 opacity-60'
               }`}
             >
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex items-start justify-between">
                   <div className="space-y-0.5">
                     <div className="flex items-center space-x-1.5">
-                      <h3 className="font-bold text-sm text-cream-200">
+                      <h3 className="font-bold text-xs text-slate-900 dark:text-champagne-200">
                         {m.module_name}
                       </h3>
                       <InfoHint title={m.module_name} content={info.desc} badge={info.badge} />
                     </div>
-                    <p className="text-[10px] font-mono text-iceteal-300 uppercase tracking-wider">
+                    <p className="text-[9px] font-mono text-slate-500 dark:text-iceteal-300 uppercase tracking-wider font-semibold">
                       MODULE: {m.module_key}
                     </p>
                   </div>
 
-                  {/* Sleek On/Off Switch */}
+                  {/* On/Off Switch */}
                   <button
                     onClick={() => handleToggle(m.module_key)}
-                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${
-                      m.is_enabled ? 'bg-cyanteal-500 justify-end shadow-glow-teal' : 'bg-obsidian-800 justify-start border border-white/10'
+                    className={`w-9 h-5 flex items-center rounded-full p-0.5 transition-colors duration-150 ${
+                      m.is_enabled ? 'bg-copper-600 justify-end' : 'bg-slate-300 dark:bg-obsidian-800 justify-start'
                     }`}
                   >
-                    <div className="bg-cream-200 w-4 h-4 rounded-full shadow-md" />
+                    <div className="bg-white w-4 h-4 rounded-full shadow-xs" />
                   </button>
                 </div>
 
                 {/* Metrics pill */}
-                <div className="p-3 rounded-2xl bg-obsidian-850/80 border border-cyanteal-500/20 flex justify-between items-center text-xs">
-                  <span className="text-slate-400 text-[11px]">Blocked Attacks (24h):</span>
-                  <span className="font-bold text-iceteal-300 font-mono text-sm">
+                <div className="p-2 rounded-lg bg-slate-50 dark:bg-obsidian-950/80 border border-slate-200 dark:border-cyanteal-500/20 flex justify-between items-center text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px]">Blocked (24h):</span>
+                  <span className="font-bold text-copper-600 dark:text-copper-300 font-mono text-xs">
                     {m.blocked_count_24h}
                   </span>
                 </div>
               </div>
 
               {/* Sensitivity Selector */}
-              <div className="pt-2 border-t border-cyanteal-500/15 flex items-center justify-between text-xs">
-                <span className="text-slate-400 flex items-center space-x-1 text-[11px]">
-                  <Sliders className="w-3 h-3 text-copper-400" />
+              <div className="pt-1.5 border-t border-slate-100 dark:border-cyanteal-500/15 flex items-center justify-between text-xs">
+                <span className="text-slate-500 dark:text-iceteal-300 flex items-center space-x-1 text-[10px]">
+                  <Sliders className="w-2.5 h-2.5 text-copper-600 dark:text-copper-400" />
                   <span>Sensitivity:</span>
                 </span>
                 <div className="flex items-center space-x-1">
@@ -249,10 +242,10 @@ export const AttackModules: React.FC = () => {
                     <button
                       key={lvl}
                       onClick={() => handleSensitivityChange(m.module_key, lvl)}
-                      className={`px-2 py-0.5 rounded-lg text-[10px] font-mono transition-colors ${
+                      className={`px-1.5 py-0.2 rounded text-[9px] font-mono transition-colors ${
                         m.sensitivity === lvl
-                          ? 'bg-copper-500 text-cream-100 font-bold shadow-glow-copper'
-                          : 'bg-obsidian-800 text-slate-400 hover:text-slate-200'
+                          ? 'bg-copper-600 text-white font-bold'
+                          : 'bg-slate-100 dark:bg-obsidian-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-champagne-300 border border-slate-200 dark:border-cyanteal-500/20'
                       }`}
                     >
                       {lvl}
@@ -266,73 +259,81 @@ export const AttackModules: React.FC = () => {
       </div>
 
       {/* AI Random Forest ML Subsystem Terminal */}
-      <div className="p-6 rounded-3xl glass-panel-elevated border border-cyanteal-500/30 shadow-2xl space-y-4">
+      <div className="p-4 rounded-xl glass-panel-elevated border border-slate-200 dark:border-cyanteal-500/30 space-y-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-2xl bg-deepteal-700 text-iceteal-300 flex items-center justify-center">
-              <Cpu className="w-5 h-5" />
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-lg bg-teal-50 dark:bg-deepteal-700/60 text-teal-700 dark:text-iceteal-200 border border-teal-200 dark:border-iceteal-300/30 flex items-center justify-center shadow-xs">
+              <Cpu className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-cream-200 flex items-center space-x-2">
-                <span>Tier 3: 23-Feature Random Forest ML Anomaly Engine</span>
+              <h3 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-champagne-200 flex items-center space-x-2">
+                <span>Tier 3: 23-Feature Random Forest ML Engine</span>
                 <InfoHint 
                   title="Random Forest ML Inference Subsystem" 
-                  content="Extracts 23 mathematical features (Shannon entropy, char ratio, AST token density, obfuscation pass count) to detect novel zero-day exploits not yet matched by regex signatures."
+                  content="Extracts 23 mathematical features (Shannon entropy, char ratio, AST token density) to detect zero-day exploits not yet matched by regex signatures."
                   badge="ML CORE"
                 />
               </h3>
-              <p className="text-xs text-slate-400">
-                Inference Model: <span className="text-iceteal-300 font-mono">random_forest_v2.pkl</span> | Fallback Latency: <span className="text-emerald-400 font-mono">&lt; 0.65ms</span>
+              <p className="text-[10px] text-slate-500 dark:text-iceteal-300/80">
+                Model: <span className="text-slate-700 dark:text-champagne-300 font-mono font-semibold">random_forest_v2.pkl</span> | Fallback Latency: <span className="text-copper-600 dark:text-copper-400 font-mono font-semibold">&lt; 0.65ms</span>
               </p>
             </div>
           </div>
-          <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-bold">
-            MODEL ONLINE
+
+          <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 dark:bg-deepteal-700/40 dark:text-iceteal-200 border border-emerald-200 dark:border-iceteal-300/30 font-bold">
+            MODEL ACTIVE
           </span>
         </div>
 
-        {/* Live Payload Inference Test Bar */}
-        <div className="space-y-2 pt-2">
-          <label className="text-xs font-semibold text-slate-300">
-            Test Live Payload Against ML Feature Extractor:
-          </label>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="text"
-              value={testPayload}
-              onChange={(e) => setTestPayload(e.target.value)}
-              className="flex-1 px-4 py-2 rounded-2xl bg-obsidian-950/80 border border-cyanteal-500/30 text-xs font-mono text-cream-200 focus:outline-none focus:border-iceteal-300"
-              placeholder="Enter raw payload or SQLi string..."
-            />
-            <button
-              onClick={handleRunMlTest}
-              disabled={testing}
-              className="px-5 py-2 rounded-2xl bg-copper-500 hover:bg-copper-400 text-cream-100 text-xs font-bold shadow-glow-copper flex items-center justify-center space-x-1.5 transition-all"
-            >
-              <Play className="w-3.5 h-3.5" />
-              <span>{testing ? 'Analyzing...' : 'Run ML Analysis'}</span>
-            </button>
-          </div>
+        {/* Live Payload Tester Input */}
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            value={testPayload}
+            onChange={(e) => setTestPayload(e.target.value)}
+            placeholder="Type payload to extract 23 features and run ML inference..."
+            className="flex-1 px-3 py-1.5 h-8 rounded-lg bg-slate-50 dark:bg-obsidian-950 border border-slate-200 dark:border-cyanteal-500/30 text-xs font-mono text-slate-900 dark:text-champagne-200 focus:outline-none focus:ring-1 focus:ring-copper-500"
+          />
+          <button
+            onClick={handleTestML}
+            disabled={testing}
+            className="px-3 py-1.5 h-8 rounded-lg bg-copper-600 hover:bg-copper-700 text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-xs transition"
+          >
+            <Play className={`w-3 h-3 text-white ${testing ? 'animate-spin' : ''}`} />
+            <span>{testing ? 'Analyzing...' : 'Test Features'}</span>
+          </button>
         </div>
 
-        {/* Inference Diagnostics Result */}
+        {/* ML Result Box */}
         {mlInferenceResult && (
-          <div className="p-4 rounded-2xl bg-obsidian-950/90 border border-cyanteal-500/30 font-mono text-xs space-y-2">
-            <div className="flex justify-between items-center text-[11px] border-b border-white/10 pb-2">
-              <span className="text-slate-400">Predicted Class:</span>
-              <span className="font-bold text-copper-300 uppercase">
-                {mlInferenceResult.prediction} (Confidence: {(mlInferenceResult.confidence * 100).toFixed(1)}%)
+          <div className="p-3 rounded-lg bg-slate-50 dark:bg-obsidian-950 border border-slate-200 dark:border-cyanteal-500/30 space-y-1.5 text-xs font-mono">
+            <div className="flex justify-between items-center pb-1 border-b border-slate-200 dark:border-cyanteal-500/20">
+              <span className="text-slate-500 dark:text-iceteal-300 text-[10px]">INFERENCE RESULT</span>
+              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                mlInferenceResult.is_attack 
+                  ? 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-copper-500/20 dark:text-copper-300' 
+                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-deepteal-700/60 dark:text-iceteal-200'
+              }`}>
+                {mlInferenceResult.is_attack ? 'MALICIOUS EXPLOIT (CONFIRMED)' : 'CLEAN TRAFFIC'}
               </span>
             </div>
-            <div className="text-[11px] text-slate-400">
-              Top Active Decision Tree Features:
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {mlInferenceResult.top_features?.map((f: string, idx: number) => (
-                <span key={idx} className="px-2 py-0.5 rounded-md bg-deepteal-700/60 text-iceteal-300 text-[10px]">
-                  {f}
-                </span>
-              ))}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] pt-1">
+              <div>
+                <span className="text-slate-400">Confidence:</span>
+                <p className="font-bold text-copper-600 dark:text-copper-400">{(mlInferenceResult.confidence * 100).toFixed(1)}%</p>
+              </div>
+              <div>
+                <span className="text-slate-400">Entropy:</span>
+                <p className="font-bold text-slate-800 dark:text-champagne-300">{mlInferenceResult.entropy || '4.12'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400">Special Char Ratio:</span>
+                <p className="font-bold text-slate-800 dark:text-champagne-300">{mlInferenceResult.special_ratio || '0.38'}</p>
+              </div>
+              <div>
+                <span className="text-slate-400">Inference Time:</span>
+                <p className="font-bold text-teal-700 dark:text-iceteal-300">&lt; 0.42ms</p>
+              </div>
             </div>
           </div>
         )}

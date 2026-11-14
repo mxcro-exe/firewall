@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
   isDark: boolean;
 }
 
@@ -12,28 +13,24 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    return (localStorage.getItem('patchshield_theme') as Theme) || 'dark';
+    const saved = localStorage.getItem('patchshield_theme');
+    if (saved === 'dark' || saved === 'light') {
+      return saved as Theme;
+    }
+    return 'dark'; // Default to 60-30-10 Dark aesthetic
   });
 
-  const [isDark, setIsDark] = useState<boolean>(true);
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     const root = document.documentElement;
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const applyTheme = () => {
-      const darkActive = theme === 'dark' || (theme === 'system' && mediaQuery.matches);
-      setIsDark(darkActive);
-      if (darkActive) {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-    };
-
-    applyTheme();
-    mediaQuery.addEventListener('change', applyTheme);
-    return () => mediaQuery.removeEventListener('change', applyTheme);
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
@@ -41,8 +38,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('patchshield_theme', newTheme);
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, isDark }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, isDark }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -53,4 +54,3 @@ export const useTheme = () => {
   if (!context) throw new Error('useTheme must be used within ThemeProvider');
   return context;
 };
-

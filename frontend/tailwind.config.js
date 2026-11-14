@@ -45,6 +45,22 @@ export default {
           400: '#dd732e',
           300: '#ea8d50',
         },
+        emeraldink: {
+          950: '#03261D',
+          900: '#064E3B',
+          800: '#08634B',
+          700: '#0E7A5D',
+        },
+        champagne: {
+          400: '#E0CB9F',
+          300: '#F8E7C9',
+          200: '#FAEFD8',
+          100: '#FCF6EA',
+        },
+        citron: {
+          500: '#D4FF00',
+          400: '#DDFF33',
+        },
         brand: {
           50: '#f0f9fa',
           100: '#d1e6e8',

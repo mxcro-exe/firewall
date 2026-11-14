@@ -107,55 +107,55 @@ export const Sites: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-200 dark:border-cyanteal-500/20 pb-3">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-champagne-200">
             {t('sites.title')}
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-[11px] text-slate-500 dark:text-iceteal-300/80">
             {t('sites.subtitle')}
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold shadow-md transition"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-copper-600 hover:bg-copper-700 text-white rounded-lg text-xs font-bold shadow-xs border border-copper-700 transition"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3.5 h-3.5" />
           <span>{t('sites.addSite')}</span>
         </button>
       </div>
 
       {/* Sites Grid / Cards */}
       {loading ? (
-        <div className="p-8 text-center text-xs text-slate-500">Loading protected sites...</div>
+        <div className="p-6 text-center text-xs text-slate-500 dark:text-iceteal-300">Loading protected sites...</div>
       ) : sites.length === 0 ? (
-        <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
-          <Globe className="w-10 h-10 text-slate-400 mx-auto" />
-          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">No protected sites registered</h3>
-          <p className="text-xs text-slate-500">Add your web store, API backend, or billing server to start virtual patching.</p>
+        <div className="p-8 text-center glass-panel rounded-xl border border-slate-200 dark:border-cyanteal-500/30 space-y-2">
+          <Globe className="w-8 h-8 text-copper-600 mx-auto" />
+          <h3 className="text-xs font-bold text-slate-900 dark:text-champagne-200">No protected sites registered</h3>
+          <p className="text-[11px] text-slate-500 dark:text-iceteal-300/80">Add your web store, API backend, or billing server to start virtual patching.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {sites.map((site) => (
             <div
               key={site.id}
-              className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4"
+              className="p-3.5 rounded-xl glass-panel border border-slate-200 dark:border-cyanteal-500/30 shadow-xs flex flex-col justify-between space-y-3"
             >
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {/* Title & Delete */}
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center">
-                      <Globe className="w-4 h-4 mr-1.5 text-brand-500" />
+                    <h3 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-champagne-200 flex items-center">
+                      <Globe className="w-3.5 h-3.5 mr-1.5 text-copper-600 dark:text-copper-400" />
                       {site.name}
                     </h3>
-                    <p className="text-[11px] font-mono text-slate-500">{site.domain_or_host}</p>
+                    <p className="text-[10px] font-mono text-slate-500 dark:text-iceteal-300">{site.domain_or_host}</p>
                   </div>
                   <button
                     onClick={() => handleDeleteSite(site.id, site.name)}
-                    className="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
+                    className="p-1 text-slate-400 hover:text-copper-600 rounded-md hover:bg-slate-100 dark:hover:bg-copper-500/10 transition"
                     title="Remove site"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -163,31 +163,31 @@ export const Sites: React.FC = () => {
                 </div>
 
                 {/* Details */}
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs space-y-2">
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-obsidian-950/80 border border-slate-200 dark:border-cyanteal-500/20 text-xs space-y-1.5">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-[11px]">Upstream Target:</span>
-                    <span className="font-mono text-slate-700 dark:text-slate-300 text-[11px] truncate max-w-[150px]">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px]">Upstream Target:</span>
+                    <span className="font-mono text-slate-800 dark:text-champagne-300 text-[10px] truncate max-w-[140px]">
                       {site.upstream_url}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-[11px]">Health Score:</span>
-                    <span className="font-bold text-emerald-500 text-[11px]">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px]">Health Score:</span>
+                    <span className="font-bold text-teal-700 dark:text-iceteal-200 text-[10px]">
                       {site.health_score}/100 (Grade A)
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-[11px]">Security Mode:</span>
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px]">Security Mode:</span>
                     <button
                       onClick={() => handleToggleMode(site.id, site.security_mode)}
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border transition ${
+                      className={`text-[9px] font-bold px-2 py-0.2 rounded-full uppercase border transition ${
                         site.security_mode === 'STRICT'
-                          ? 'bg-rose-500/10 text-rose-500 border-rose-500/30'
+                          ? 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/10 dark:text-rose-400'
                           : site.security_mode === 'PROTECT'
-                          ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30'
-                          : 'bg-amber-500/10 text-amber-500 border-amber-500/30'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400'
+                          : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400'
                       }`}
                       title="Click to toggle mode"
                     >
@@ -196,14 +196,14 @@ export const Sites: React.FC = () => {
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 text-[11px]">Direct Bypass:</span>
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px]">Direct Bypass:</span>
                     {site.bypass_detected ? (
-                      <span className="flex items-center text-[10px] text-rose-500 font-semibold">
+                      <span className="flex items-center text-[10px] text-rose-600 font-semibold">
                         <AlertTriangle className="w-3 h-3 mr-1" />
                         Exposed!
                       </span>
                     ) : (
-                      <span className="flex items-center text-[10px] text-emerald-500 font-semibold">
+                      <span className="flex items-center text-[10px] text-emerald-600 font-semibold">
                         <CheckCircle2 className="w-3 h-3 mr-1" />
                         Shielded
                       </span>
@@ -213,13 +213,13 @@ export const Sites: React.FC = () => {
               </div>
 
               {/* Card Footer Actions */}
-              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
                 <button
                   onClick={() => handleCheckBypass(site.id)}
                   disabled={checkingBypassId === site.id}
-                  className="flex items-center space-x-1.5 text-xs text-brand-500 hover:text-brand-400 font-medium transition"
+                  className="flex items-center space-x-1 text-[11px] text-copper-600 hover:text-copper-700 dark:text-iceteal-300 font-medium transition"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${checkingBypassId === site.id ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-3 h-3 ${checkingBypassId === site.id ? 'animate-spin' : ''}`} />
                   <span>{checkingBypassId === site.id ? 'Checking...' : t('sites.checkBypass')}</span>
                 </button>
 
@@ -227,10 +227,10 @@ export const Sites: React.FC = () => {
                   href={`http://localhost:8000/proxy/${site.id}/`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center space-x-1 text-xs text-slate-400 hover:text-slate-200"
+                  className="flex items-center space-x-1 text-[11px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-champagne-200"
                 >
                   <span>Gateway Link</span>
-                  <ExternalLink className="w-3 h-3 ml-0.5" />
+                  <ExternalLink className="w-2.5 h-2.5 ml-0.5" />
                 </a>
               </div>
             </div>
@@ -240,13 +240,13 @@ export const Sites: React.FC = () => {
 
       {/* Add Site Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-6 space-y-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="w-full max-w-sm rounded-xl glass-panel-elevated border border-slate-200 dark:border-slate-700 shadow-2xl p-5 space-y-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-champagne-200">
               {t('sites.addSite')}
             </h3>
 
-            <form onSubmit={handleCreateSite} className="space-y-3 text-xs">
+            <form onSubmit={handleCreateSite} className="space-y-2.5 text-xs">
               <div>
                 <label className="block font-medium text-slate-700 dark:text-slate-300 mb-1">
                   {t('sites.siteName')}
@@ -257,7 +257,7 @@ export const Sites: React.FC = () => {
                   placeholder="e.g. My Online Store"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-obsidian-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-champagne-200 focus:outline-none focus:ring-1 focus:ring-copper-500"
                 />
               </div>
 
@@ -271,7 +271,7 @@ export const Sites: React.FC = () => {
                   placeholder="e.g. store.local or localhost"
                   value={newDomain}
                   onChange={(e) => setNewDomain(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-obsidian-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-champagne-200 focus:outline-none focus:ring-1 focus:ring-copper-500"
                 />
               </div>
 
@@ -285,7 +285,7 @@ export const Sites: React.FC = () => {
                   placeholder="e.g. http://127.0.0.1:9000"
                   value={newUpstream}
                   onChange={(e) => setNewUpstream(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-obsidian-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-champagne-200 focus:outline-none focus:ring-1 focus:ring-copper-500"
                 />
               </div>
 
@@ -296,7 +296,7 @@ export const Sites: React.FC = () => {
                 <select
                   value={newMode}
                   onChange={(e: any) => setNewMode(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-obsidian-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-champagne-200 focus:outline-none focus:ring-1 focus:ring-copper-500"
                 >
                   <option value="PROTECT">Protect (Active Blocking)</option>
                   <option value="MONITOR">Monitor Only (Log Only)</option>
@@ -304,17 +304,17 @@ export const Sites: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex justify-end space-x-2 pt-3">
+              <div className="flex justify-end space-x-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium"
+                  className="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold shadow-md transition"
+                  className="px-3 py-1.5 rounded-lg bg-copper-600 hover:bg-copper-700 text-white font-bold shadow-xs transition"
                 >
                   Save Site
                 </button>
@@ -326,4 +326,3 @@ export const Sites: React.FC = () => {
     </div>
   );
 };
-

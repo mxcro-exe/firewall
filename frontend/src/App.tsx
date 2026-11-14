@@ -6,10 +6,9 @@ import { ModeProvider } from './context/ModeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
 
-import { ProductionDashboardLayout } from './components/dashboard/ProductionDashboardLayout';
+import { ProductionDashboardContent } from './components/dashboard/ProductionDashboardLayout';
 import { Login } from './pages/Login';
 import { Onboarding } from './pages/Onboarding';
-import { Dashboard } from './pages/Dashboard';
 import { Sites } from './pages/Sites';
 import { Vulnerabilities } from './pages/Vulnerabilities';
 import { Rules } from './pages/Rules';
@@ -48,17 +47,7 @@ export const AppContent: React.FC = () => {
           }
         />
 
-        {/* Root Route: Clean Light Production Dashboard matching exact prompt */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <ProductionDashboardLayout />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Main App Layout for deeper routes */}
+        {/* Master Production Layout for all routes */}
         <Route
           path="/"
           element={
@@ -67,6 +56,8 @@ export const AppContent: React.FC = () => {
             </ProtectedRoute>
           }
         >
+          {/* Root Route: Clean Light Bento Grid Dashboard */}
+          <Route index element={<ProductionDashboardContent />} />
           <Route path="sites" element={<Sites />} />
           <Route path="vulnerabilities" element={<Vulnerabilities />} />
           <Route path="rules" element={<Rules />} />
