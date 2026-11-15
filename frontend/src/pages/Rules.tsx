@@ -290,13 +290,10 @@ export const Rules: React.FC = () => {
                 </span>
               </div>
 
-              {/* Explanations */}
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl text-xs space-y-1">
-                <p className="text-slate-800 dark:text-slate-200">
-                  <strong>English:</strong> {rule.explanation_en}
-                </p>
-                <p className="text-slate-600 dark:text-slate-400">
-                  <strong>தமிழ்:</strong> {rule.explanation_ta}
+              {/* Explanation */}
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl text-xs">
+                <p className="text-slate-800 dark:text-slate-200 font-medium">
+                  {rule.explanation_en}
                 </p>
               </div>
             </div>
@@ -406,21 +403,12 @@ export const Rules: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-medium mb-1">Explanation (English)</label>
+                <label className="block text-slate-700 dark:text-slate-300 font-medium mb-1">Explanation</label>
                 <input
                   type="text"
+                  placeholder="e.g. Blocks SQL query injection on target parameter"
                   value={explEn}
                   onChange={(e) => setExplEn(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-medium mb-1">விளக்கம் (தமிழ்)</label>
-                <input
-                  type="text"
-                  value={explTa}
-                  onChange={(e) => setExplTa(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl"
                 />
               </div>

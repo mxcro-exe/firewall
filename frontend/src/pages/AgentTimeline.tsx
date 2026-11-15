@@ -198,13 +198,10 @@ export const AgentTimeline: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bilingual Explanation */}
-              <div className="p-3.5 bg-gradient-to-r from-brand-500/5 to-indigo-500/5 border border-brand-500/20 rounded-2xl space-y-1.5">
-                <p className="text-slate-800 dark:text-slate-200">
-                  <strong>English:</strong> {act.explanation_en}
-                </p>
-                <p className="text-slate-700 dark:text-slate-300">
-                  <strong>தமிழ்:</strong> {act.explanation_ta}
+              {/* Explanation */}
+              <div className="p-3 bg-brand-500/5 dark:bg-slate-800/40 border border-brand-500/20 rounded-2xl">
+                <p className="text-slate-800 dark:text-slate-200 text-xs font-medium">
+                  {act.explanation_en}
                 </p>
               </div>
             </div>
