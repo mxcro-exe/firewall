@@ -71,11 +71,11 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
     },
     {
       id: 'page-demo-lab',
-      title: 'Live Defense Demo Lab',
-      description: 'Interactive exploit simulator comparing vulnerable store vs protected gateway',
+      title: 'Security Testing & Attack Simulator',
+      description: 'Interactive exploit simulator testing attacks directly against protected gateways',
       category: 'Tool',
       path: '/demo-lab',
-      keywords: ['demo', 'lab', 'simulator', 'exploit', 'test', 'live', 'store', 'shop'],
+      keywords: ['simulator', 'exploit', 'test', 'live', 'store', 'shop', 'security', 'waf'],
       icon: <Sparkles className="w-3.5 h-3.5 text-amber-500" />
     },
     {
@@ -348,7 +348,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
     switch (segment) {
       case 'attack-modules': return language === 'ta' ? '20 தாக்குதல் கவசங்கள்' : language === 'hi' ? '20 सुरक्षा कवच' : '20 Attack Defense Modules';
       case 'prove-patch': return 'Prove-then-Patch Verifier';
-      case 'demo-lab': return language === 'ta' ? 'நேரலை சோதனை' : language === 'hi' ? 'लाइव परीक्षण' : 'Live Defense Demo Lab';
+      case 'demo-lab': return language === 'ta' ? 'நேரலை சோதனை' : language === 'hi' ? 'लाइव परीक्षण' : 'Security Testing Lab';
       case 'traffic': return language === 'ta' ? 'போக்குவரத்து ஸ்ட்ரீம்' : language === 'hi' ? 'ट्रैफ़िक स्ट्रीम' : 'Proxy Streaming Telemetry';
       case 'rules': return 'ReDoS-Proof Virtual Patch Rules';
       case 'sites': return language === 'ta' ? 'இணையதளங்கள்' : language === 'hi' ? 'वेबसाइटें' : 'Protected Sites & Upstreams';

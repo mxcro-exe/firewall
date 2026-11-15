@@ -410,7 +410,7 @@ export const Settings: React.FC = () => {
             </h3>
             <p className="text-slate-500">Access the PatchShield Gateway REST API programmatically.</p>
             <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl font-mono text-[11px] text-slate-400">
-              Demo Key: ps_live_7a89b4f028e1... (Full Access)
+              Production Key: ps_live_7a89b4f028e1... (Full Access)
             </div>
           </div>
         </div>

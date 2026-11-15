@@ -52,7 +52,7 @@ export const Login: React.FC = () => {
     }
   };
 
-  const fillDemo = () => {
+  const fillDefaultAdmin = () => {
     setUsername('admin');
     setPassword('Admin@123!');
     setRequiresTotp(false);
@@ -150,15 +150,15 @@ export const Login: React.FC = () => {
           </button>
         </form>
 
-        {/* Demo credentials helper pill */}
+        {/* Default credentials helper pill */}
         <div className="pt-2">
           <button
             type="button"
-            onClick={fillDemo}
+            onClick={fillDefaultAdmin}
             className="w-full py-2 px-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/80 text-[11px] text-slate-400 hover:text-slate-200 flex items-center justify-center space-x-1.5 transition"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Use Demo Admin (admin / Admin@123!)</span>
+            <span>Default Admin Login (admin / Admin@123!)</span>
           </button>
         </div>
       </div>

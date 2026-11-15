@@ -23,7 +23,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false }) => {
   const shopkeeperNav = [
     { to: '/', label: language === 'ta' ? 'கடை பாதுகாப்பு' : language === 'hi' ? 'दुकान सुरक्षा' : 'Store Protection', icon: LayoutDashboard, exact: true },
     { to: '/sites', label: language === 'ta' ? 'இணையதளங்கள்' : language === 'hi' ? 'वेबसाइटें' : 'My Websites', icon: Globe },
-    { to: '/demo-lab', label: language === 'ta' ? 'பாதுகாப்பு சோதனை' : language === 'hi' ? 'सुरक्षा परीक्षण' : 'Live Defense Demo', icon: Sparkles, badge: 'DEMO' },
+    { to: '/demo-lab', label: language === 'ta' ? 'பாதுகாப்பு சோதனை' : language === 'hi' ? 'सुरक्षा परीक्षण' : 'Security Testing Lab', icon: Sparkles, badge: 'LAB' },
     { to: '/alerts', label: language === 'ta' ? 'எச்சரிக்கைகள்' : language === 'hi' ? 'सूचनाएं' : 'Store Alerts', icon: Bell },
     { to: '/reports', label: language === 'ta' ? 'அறிக்கைகள் (PDF)' : language === 'hi' ? 'रिपोर्ट (PDF)' : 'Safety Reports', icon: FileText, badge: 'PDF' },
     { to: '/settings', label: t('nav.settings'), icon: Settings },
@@ -47,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false }) => {
     { to: '/', label: language === 'ta' ? 'கட்டுப்பாட்டு தளம்' : language === 'hi' ? 'सुरक्षा नियंत्रण' : 'Security Deck', icon: LayoutDashboard, exact: true },
     { to: '/attack-modules', label: language === 'ta' ? '20 தாக்குதல் கவசங்கள்' : language === 'hi' ? '20 सुरक्षा कवच' : '20 Attack Shields', icon: Flame, badge: '20 Def' },
     { to: '/prove-patch', label: 'Prove-then-Patch', icon: GitCompare, badge: 'PTP' },
-    { to: '/demo-lab', label: language === 'ta' ? 'பாதுகாப்பு சோதனை' : language === 'hi' ? 'लाइव परीक्षण' : 'Live Demo Lab', icon: Sparkles, badge: 'DEMO' },
+    { to: '/demo-lab', label: language === 'ta' ? 'பாதுகாப்பு சோதனை' : language === 'hi' ? 'लाइव परीक्षण' : 'Security Testing Lab', icon: Sparkles, badge: 'LAB' },
     { to: '/traffic', label: language === 'ta' ? 'போக்குவரத்து' : language === 'hi' ? 'लाइव ट्रैफ़िक' : 'Proxy Streaming', icon: Activity },
     { to: '/rules', label: 'ReDoS Rules', icon: FileCode },
     { to: '/sites', label: t('nav.sites'), icon: Globe },

@@ -18,7 +18,7 @@ export const Dashboard: React.FC = () => {
   const [activePatchesCount, setActivePatchesCount] = useState<number>(1);
   const [blockedCount, setBlockedCount] = useState<number>(0);
   const [healthScore, setHealthScore] = useState<number>(88);
-  const [siteName, setSiteName] = useState<string>('Sri Murugan Organics');
+  const [siteName, setSiteName] = useState<string>('Primary Production Store');
   const [loading, setLoading] = useState<boolean>(true);
   const [activeStage, setActiveStage] = useState<number>(5); // Default to Stage 5 Full Enforce
   const [quickCheckDone, setQuickCheckDone] = useState<boolean>(false);

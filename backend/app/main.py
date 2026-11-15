@@ -50,19 +50,19 @@ async def seed_initial_data():
                 details="Seeded initial admin account"
             ))
 
-        # 2. Seed Default Demo Site (Vulnerable Demo Store)
-        site_res = await db.execute(select(Site).where(Site.name == "Demo Store"))
+        # 2. Seed Default Production Site
+        site_res = await db.execute(select(Site).where(Site.name.in_(["Primary Production Store", "Demo Store"])))
         if not site_res.scalars().first():
-            demo_site = Site(
-                name="Demo Store",
+            prod_site = Site(
+                name="Primary Production Store",
                 domain_or_host="localhost",
                 upstream_url="http://127.0.0.1:9000",
                 listen_port=8000,
                 security_mode="PROTECT",
-                health_score=88,
+                health_score=98,
                 bypass_detected=False
             )
-            db.add(demo_site)
+            db.add(prod_site)
 
         # 3. Seed 20 Attack Defense Modules
         default_modules = [

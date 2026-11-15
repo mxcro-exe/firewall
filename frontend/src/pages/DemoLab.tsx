@@ -198,7 +198,7 @@ export const DemoLab: React.FC = () => {
             <InfoHint 
               title="Live Attack Simulator" 
               content="Real-time interactive testing console. Fire live attacks or benign requests directly through the gateway to prove instant mitigation."
-              badge="DEMO LAB"
+              badge="SECURITY LAB"
             />
           </div>
           <p className="text-[11px] text-slate-500 dark:text-iceteal-300/80 mt-0.5">

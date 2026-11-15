@@ -59,7 +59,7 @@ def test_sites_crud_and_mode_toggle():
             assert sites_resp.status_code == 200
             sites = sites_resp.json()
             assert len(sites) >= 1
-            demo_site = next(s for s in sites if s["name"] == "Demo Store")
+            demo_site = next(s for s in sites if s["name"] in ["Demo Store", "Primary Production Store"])
             assert demo_site["upstream_url"] == "http://127.0.0.1:9000"
 
             # 3. Create a new site
