@@ -18,8 +18,16 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
     
-    # Database
+    # Database & Cache Persistence
     DATABASE_URL: str = f"sqlite+aiosqlite:///{DATA_DIR / 'patchshield.db'}"
+    REDIS_URL: str = ""  # e.g., "redis://localhost:6379/0" for high-scale multi-node clusters
+    
+    # High-Throughput Batch Logging & Concurrency
+    LOG_BATCH_INTERVAL_MS: int = 250
+    LOG_BATCH_MAX_SIZE: int = 100
+    PROXY_MAX_CONNECTIONS: int = 2000
+    PROXY_MAX_KEEPALIVE_CONNECTIONS: int = 500
+    KERNEL_IPC_SOCKET: str = ""  # Kubernetes host daemon IPC socket
     
     # Gateway Defaults
     DEFAULT_SECURITY_MODE: str = "PROTECT"  # MONITOR | PROTECT | STRICT

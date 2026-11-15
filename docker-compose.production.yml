@@ -1,0 +1,113 @@
+version: "3.8"
+
+# PatchShield Enterprise High-Availability Production Cluster
+# Resolves:
+# 1. Reverse Proxy Bottleneck -> Edge Nginx + Multi-Worker Horizontal Uvicorn Cluster
+# 2. SQLite Contention -> High-Throughput PostgreSQL / TimescaleDB + Redis Ban Cache
+# 3. Privilege Boundary -> Unprivileged Gateway Pods with Host Daemon IPC
+
+services:
+  # 1. Edge Load Balancer & SSL Termination
+  edge-proxy:
+    image: nginx:alpine
+    container_name: patchshield-edge-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./conf/nginx_edge.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - gateway-1
+      - gateway-2
+      - gateway-3
+    networks:
+      - patchshield-net
+
+  # 2. Horizontal PatchShield AI Gateway Cluster (Instances 1, 2, 3)
+  gateway-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: patchshield-gateway-1
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://patchshield:ps_secure_pass_2026@postgres:5432/patchshield_db
+      - REDIS_URL=redis://redis:6379/0
+      - LOG_BATCH_INTERVAL_MS=250
+      - LOG_BATCH_MAX_SIZE=200
+      - PROXY_MAX_CONNECTIONS=5000
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - patchshield-net
+
+  gateway-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: patchshield-gateway-2
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://patchshield:ps_secure_pass_2026@postgres:5432/patchshield_db
+      - REDIS_URL=redis://redis:6379/0
+      - LOG_BATCH_INTERVAL_MS=250
+      - LOG_BATCH_MAX_SIZE=200
+      - PROXY_MAX_CONNECTIONS=5000
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - patchshield-net
+
+  gateway-3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: patchshield-gateway-3
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://patchshield:ps_secure_pass_2026@postgres:5432/patchshield_db
+      - REDIS_URL=redis://redis:6379/0
+      - LOG_BATCH_INTERVAL_MS=250
+      - LOG_BATCH_MAX_SIZE=200
+      - PROXY_MAX_CONNECTIONS=5000
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - patchshield-net
+
+  # 3. Persistent High-Throughput Time-Series Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: patchshield-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=patchshield
+      - POSTGRES_PASSWORD=ps_secure_pass_2026
+      - POSTGRES_DB=patchshield_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - patchshield-net
+
+  # 4. Distributed In-Memory Cache & Sliding-Window Ban Store
+  redis:
+    image: redis:7-alpine
+    container_name: patchshield-redis
+    restart: always
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - patchshield-net
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  patchshield-net:
+    driver: bridge

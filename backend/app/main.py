@@ -109,8 +109,11 @@ async def lifespan(app: FastAPI):
     # Startup: initialize database and seed baseline data
     await init_db()
     await seed_initial_data()
+    from app.gateway.log_buffer import log_buffer
+    await log_buffer.start()
     yield
     # Shutdown
+    await log_buffer.stop()
     await proxy_handler.client.aclose()
 
 app = FastAPI(

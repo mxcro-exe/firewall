@@ -1,13 +1,15 @@
 import re
 import json
+import time
 import hashlib
 import httpx
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, Any
 from fastapi import Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from app.core.config import settings
 from app.models.site import Site
 from app.models.rule import VirtualPatchRule
 from app.models.traffic import TrafficLog
@@ -18,6 +20,7 @@ from app.gateway.honeypot import is_honeypot_path
 from app.gateway.geoip import geoip_filter
 from app.gateway.streaming_proxy import streaming_proxy
 from app.gateway.packet_filter import packet_filter
+from app.gateway.log_buffer import log_buffer
 from app.core.kv_cache import kv_cache
 from app.core.database import AsyncSessionLocal
 
@@ -53,21 +56,42 @@ def sanitize_payload(payload_bytes: bytes) -> str:
 
 class ReverseProxyHandler:
     def __init__(self):
-        self.client = httpx.AsyncClient(timeout=30.0, follow_redirects=False)
+        limits = httpx.Limits(
+            max_keepalive_connections=settings.PROXY_MAX_KEEPALIVE_CONNECTIONS,
+            max_connections=settings.PROXY_MAX_CONNECTIONS,
+            keepalive_expiry=60.0
+        )
+        self.client = httpx.AsyncClient(timeout=30.0, follow_redirects=False, limits=limits)
+        self._site_cache: Dict[str, Tuple[Optional[Site], float]] = {}
 
     async def resolve_site(self, request: Request, db: AsyncSession, site_id: Optional[str] = None) -> Optional[Site]:
+        # Fast in-memory cache to prevent DB read serialization under high concurrency
+        host = request.headers.get("host", "").split(":")[0].lower()
+        custom_site_id = request.headers.get("X-Site-ID", "")
+        cache_key = f"{site_id or ''}:{custom_site_id}:{host}"
+        now = time.time()
+
+        if cache_key in self._site_cache:
+            cached_site, expire_ts = self._site_cache[cache_key]
+            if now < expire_ts:
+                return cached_site
+
+        # Cache miss: query database
+        resolved = await self._query_site(request, db, site_id, custom_site_id, host)
+        self._site_cache[cache_key] = (resolved, now + 5.0)  # 5-second TTL
+        return resolved
+
+    async def _query_site(self, request: Request, db: AsyncSession, site_id: Optional[str], custom_site_id: str, host: str) -> Optional[Site]:
         if site_id:
             res = await db.execute(select(Site).where(Site.id == site_id, Site.is_active == True))
             return res.scalars().first()
             
-        custom_site_id = request.headers.get("X-Site-ID")
         if custom_site_id:
             res = await db.execute(select(Site).where(Site.id == custom_site_id, Site.is_active == True))
             site = res.scalars().first()
             if site:
                 return site
 
-        host = request.headers.get("host", "").split(":")[0].lower()
         res = await db.execute(select(Site).where(Site.domain_or_host == host, Site.is_active == True))
         site = res.scalars().first()
         if site:
@@ -75,6 +99,40 @@ class ReverseProxyHandler:
 
         res = await db.execute(select(Site).where(Site.is_active == True).limit(1))
         return res.scalars().first()
+
+    def enqueue_log(
+        self,
+        site_id: str,
+        client_ip: str,
+        method: str,
+        path: str,
+        query_str: str,
+        body: bytes,
+        headers: dict,
+        ml_score: float = 0.0,
+        ml_prediction: str = "Benign",
+        action_taken: str = "ALLOW",
+        response_status: int = 200,
+        scan_latency_ms: float = 0.0,
+        rule_id: Optional[str] = None
+    ):
+        """Asynchronously enqueue traffic log without blocking reverse proxy I/O."""
+        log_buffer.enqueue({
+            "site_id": site_id,
+            "timestamp": datetime.utcnow(),
+            "client_ip": client_ip,
+            "method": method,
+            "path": path,
+            "query_params_sanitized": query_str,
+            "body_sanitized": sanitize_payload(body),
+            "headers_sanitized": sanitize_headers(headers),
+            "ml_score": ml_score,
+            "ml_prediction": ml_prediction,
+            "action_taken": action_taken,
+            "response_status": response_status,
+            "scan_latency_ms": scan_latency_ms,
+            "rule_id": rule_id
+        })
 
     async def forward_request(self, request: Request, path: str, site_id: Optional[str] = None) -> Response:
         async with AsyncSessionLocal() as db:
@@ -120,22 +178,19 @@ class ReverseProxyHandler:
             # --- PRE-FILTER: HONEYPOT DECEPTION TRAP ---
             is_honey, honey_msg = is_honeypot_path(clean_path)
             if is_honey:
-                log_entry = TrafficLog(
+                self.enqueue_log(
                     site_id=site.id,
-                    timestamp=datetime.utcnow(),
                     client_ip=client_ip,
                     method=request.method,
                     path=clean_path,
-                    query_params_sanitized=query_str,
-                    body_sanitized=sanitize_payload(body),
-                    headers_sanitized=sanitize_headers(dict(request.headers)),
+                    query_str=query_str,
+                    body=body,
+                    headers=dict(request.headers),
                     ml_score=1.0,
                     ml_prediction="Honeypot_Trap",
-                    rule_action="HONEYPOT_BLOCKED",
+                    action_taken="HONEYPOT_BLOCKED",
                     response_status=404
                 )
-                db.add(log_entry)
-                await db.commit()
                 return Response(
                     content=json.dumps({"error": "Not Found", "detail": "Honeypot trap triggered"}),
                     status_code=404,
@@ -171,44 +226,38 @@ class ReverseProxyHandler:
 
             if matched_rule:
                 if matched_rule.status == "SHADOW" or site.security_mode == "MONITOR":
-                    log_entry = TrafficLog(
+                    self.enqueue_log(
                         site_id=site.id,
-                        timestamp=datetime.utcnow(),
                         client_ip=client_ip,
                         method=request.method,
                         path=clean_path,
-                        query_params_sanitized=query_str,
-                        body_sanitized=sanitize_payload(body),
-                        headers_sanitized=sanitize_headers(dict(request.headers)),
+                        query_str=query_str,
+                        body=body,
+                        headers=dict(request.headers),
                         ml_score=0.9,
                         ml_prediction="Virtual_Patch_Shadow_Match",
-                        rule_action="SHADOW_LOGGED",
-                        matched_rule_id=matched_rule.id,
+                        action_taken="SHADOW_LOGGED",
+                        rule_id=matched_rule.id,
                         response_status=200
                     )
-                    db.add(log_entry)
-                    await db.commit()
 
                 elif matched_rule.status == "CANARY":
                     ip_hash_bucket = int(hashlib.md5(client_ip.encode()).hexdigest(), 16) % 100
                     if ip_hash_bucket < 5:  # 5% canary
-                        log_entry = TrafficLog(
+                        self.enqueue_log(
                             site_id=site.id,
-                            timestamp=datetime.utcnow(),
                             client_ip=client_ip,
                             method=request.method,
                             path=clean_path,
-                            query_params_sanitized=query_str,
-                            body_sanitized=sanitize_payload(body),
-                            headers_sanitized=sanitize_headers(dict(request.headers)),
+                            query_str=query_str,
+                            body=body,
+                            headers=dict(request.headers),
                             ml_score=0.99,
                             ml_prediction="Canary_Block",
-                            rule_action="CANARY_BLOCKED",
-                            matched_rule_id=matched_rule.id,
+                            action_taken="CANARY_BLOCKED",
+                            rule_id=matched_rule.id,
                             response_status=403
                         )
-                        db.add(log_entry)
-                        await db.commit()
                         return Response(
                             content=json.dumps({
                                 "error": "Blocked by PatchShield Canary Virtual Patch",
@@ -222,23 +271,20 @@ class ReverseProxyHandler:
                         )
 
                 elif matched_rule.status == "ENFORCED":
-                    log_entry = TrafficLog(
+                    self.enqueue_log(
                         site_id=site.id,
-                        timestamp=datetime.utcnow(),
                         client_ip=client_ip,
                         method=request.method,
                         path=clean_path,
-                        query_params_sanitized=query_str,
-                        body_sanitized=sanitize_payload(body),
-                        headers_sanitized=sanitize_headers(dict(request.headers)),
+                        query_str=query_str,
+                        body=body,
+                        headers=dict(request.headers),
                         ml_score=1.0,
                         ml_prediction="Virtual_Patch_Enforced",
-                        rule_action="ENFORCE_BLOCKED",
-                        matched_rule_id=matched_rule.id,
+                        action_taken="ENFORCE_BLOCKED",
+                        rule_id=matched_rule.id,
                         response_status=403
                     )
-                    db.add(log_entry)
-                    await db.commit()
                     return Response(
                         content=json.dumps({
                             "error": "Request blocked by PatchShield Virtual Patch",
@@ -265,22 +311,19 @@ class ReverseProxyHandler:
 
             if mod_blocked:
                 if site.security_mode != "MONITOR":
-                    log_entry = TrafficLog(
+                    self.enqueue_log(
                         site_id=site.id,
-                        timestamp=datetime.utcnow(),
                         client_ip=client_ip,
                         method=request.method,
                         path=clean_path,
-                        query_params_sanitized=query_str,
-                        body_sanitized=sanitize_payload(body),
-                        headers_sanitized=sanitize_headers(dict(request.headers)),
+                        query_str=query_str,
+                        body=body,
+                        headers=dict(request.headers),
                         ml_score=0.95,
                         ml_prediction=f"Module_{mod_key.upper()}",
-                        rule_action="MODULE_BLOCKED",
+                        action_taken="MODULE_BLOCKED",
                         response_status=403
                     )
-                    db.add(log_entry)
-                    await db.commit()
                     return Response(
                         content=json.dumps({
                             "error": "Request blocked by Attack Defense Module",
@@ -293,22 +336,19 @@ class ReverseProxyHandler:
                     )
                 else:
                     # In Monitor mode, record shadow match
-                    log_entry = TrafficLog(
+                    self.enqueue_log(
                         site_id=site.id,
-                        timestamp=datetime.utcnow(),
                         client_ip=client_ip,
                         method=request.method,
                         path=clean_path,
-                        query_params_sanitized=query_str,
-                        body_sanitized=sanitize_payload(body),
-                        headers_sanitized=sanitize_headers(dict(request.headers)),
+                        query_str=query_str,
+                        body=body,
+                        headers=dict(request.headers),
                         ml_score=0.95,
                         ml_prediction=f"Module_{mod_key.upper()}",
-                        rule_action="SHADOW_LOGGED",
+                        action_taken="SHADOW_LOGGED",
                         response_status=200
                     )
-                    db.add(log_entry)
-                    await db.commit()
 
             # --- TIER 3: 23-FEATURE RANDOM FOREST ML FALLBACK ---
             ml_res = ml_subsystem.predict(
@@ -320,22 +360,19 @@ class ReverseProxyHandler:
             )
 
             if ml_res["prediction"] != "Benign" and ml_res["confidence"] >= 0.85 and site.security_mode == "STRICT":
-                log_entry = TrafficLog(
+                self.enqueue_log(
                     site_id=site.id,
-                    timestamp=datetime.utcnow(),
                     client_ip=client_ip,
                     method=request.method,
                     path=clean_path,
-                    query_params_sanitized=query_str,
-                    body_sanitized=sanitize_payload(body),
-                    headers_sanitized=sanitize_headers(dict(request.headers)),
+                    query_str=query_str,
+                    body=body,
+                    headers=dict(request.headers),
                     ml_score=ml_res["confidence"],
                     ml_prediction=f"ML_{ml_res['prediction']}",
-                    rule_action="ML_BLOCKED",
+                    action_taken="ML_BLOCKED",
                     response_status=403
                 )
-                db.add(log_entry)
-                await db.commit()
                 return Response(
                     content=json.dumps({
                         "error": "Request blocked by ML Fallback Anomaly Classifier",
@@ -368,23 +405,20 @@ class ReverseProxyHandler:
                     body_bytes=body
                 )
 
-                # Log successful traffic
-                traffic_log = TrafficLog(
+                # Log successful traffic asynchronously
+                self.enqueue_log(
                     site_id=site.id,
-                    timestamp=datetime.utcnow(),
                     client_ip=client_ip,
                     method=request.method,
                     path=clean_path,
-                    query_params_sanitized=request.url.query,
-                    body_sanitized=sanitize_payload(body),
-                    headers_sanitized=sanitize_headers(dict(request.headers)),
+                    query_str=request.url.query,
+                    body=body,
+                    headers=dict(request.headers),
                     ml_score=ml_res["confidence"] if ml_res["prediction"] != "Benign" else 0.0,
                     ml_prediction=ml_res["prediction"],
-                    rule_action="PASSED",
+                    action_taken="PASSED",
                     response_status=streamed_resp.status_code
                 )
-                db.add(traffic_log)
-                await db.commit()
 
                 return streamed_resp
 
