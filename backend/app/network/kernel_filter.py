@@ -24,6 +24,7 @@ class OSKernelFirewall:
         self.os_type = platform.system()
         self.is_windows = self.os_type == "Windows"
         self.is_linux = self.os_type == "Linux"
+        self.is_macos = self.os_type == "Darwin"
         self.active_kernel_rules: Dict[str, str] = {}  # ip -> rule_identifier
         self.dropped_packets_count = 0
         self.is_dry_run = os.environ.get("PATCHSHIELD_MOCK_KERNEL", "0") == "1"
@@ -36,6 +37,8 @@ class OSKernelFirewall:
             return "Windows Filtering Platform (WFP / Netsh Driver)"
         elif self.is_linux:
             return "Linux Netfilter & eBPF / XDP (Driver Level)"
+        elif self.is_macos:
+            return "macOS Packet Filter (PF / pfctl BSD Kernel)"
         return f"{self.os_type} Generic Socket Filter"
 
     def inject_kernel_drop(self, ip: str, reason: str = "Hostile Exploit Intercept") -> Tuple[bool, str]:
@@ -84,6 +87,20 @@ class OSKernelFirewall:
                 self.active_kernel_rules[ip] = rule_name
                 return False, str(e)
 
+        elif self.is_macos:
+            # macOS Packet Filter (PF) via pfctl
+            cmd = ["pfctl", "-t", "patchshield_blacklist", "-T", "add", ip]
+            try:
+                if not self.is_dry_run:
+                    subprocess.run(cmd, capture_output=True, text=True, timeout=3)
+                self.active_kernel_rules[ip] = rule_name
+                logger.info(f"[KERNEL DROP] Injected macOS PF rule for {ip}: {reason}")
+                return True, f"Kernel rule successfully programmed into macOS Packet Filter (PF) for {ip}"
+            except Exception as e:
+                logger.error(f"Error injecting macOS PF rule: {e}")
+                self.active_kernel_rules[ip] = rule_name
+                return False, str(e)
+
         else:
             self.active_kernel_rules[ip] = rule_name
             return True, f"Simulated kernel drop for {ip} on {self.os_type}"
@@ -114,6 +131,15 @@ class OSKernelFirewall:
             except Exception as e:
                 return False, str(e)
 
+        elif self.is_macos:
+            cmd = ["pfctl", "-t", "patchshield_blacklist", "-T", "delete", ip]
+            try:
+                if not self.is_dry_run:
+                    subprocess.run(cmd, capture_output=True, text=True, timeout=3)
+                return True, f"Removed macOS PF kernel rule for {ip}"
+            except Exception as e:
+                return False, str(e)
+
         return True, f"Kernel rule cleared for {ip}"
 
     def get_status(self) -> Dict:
@@ -130,6 +156,7 @@ class OSKernelFirewall:
                 "Zero-overhead kernel packet drops",
                 "Hardware NDIS / WFP filtering on Windows",
                 "eBPF / XDP sub-50ns driver drop support for Linux",
+                "BSD Packet Filter (PF / pfctl) anchor support for macOS",
                 "Automatic synchronization with in-memory KV ban cache"
             ]
         }
