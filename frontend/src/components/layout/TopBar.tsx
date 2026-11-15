@@ -35,7 +35,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
   const navigate = useNavigate();
 
   // Dropdown States
-  const [showModeMenu, setShowModeMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
@@ -47,7 +46,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const modeMenuRef = useRef<HTMLDivElement>(null);
 
   // Search Database
   const searchDatabase: SearchEntry[] = useMemo(() => [
@@ -332,9 +330,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
         setIsSearchOpen(false);
       }
-      if (modeMenuRef.current && !modeMenuRef.current.contains(e.target as Node)) {
-        setShowModeMenu(false);
-      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -535,14 +530,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
           </button>
         </div>
 
-        {/* Clean Mode Indicator linking directly to Settings */}
-        <button
-          onClick={() => navigate('/settings')}
-          className="flex items-center space-x-1.5 h-8 px-2.5 rounded-lg border border-slate-200 dark:border-cyanteal-500/30 bg-slate-100/90 dark:bg-obsidian-900/90 text-xs font-semibold text-slate-700 dark:text-champagne-300 hover:border-copper-500/40 dark:hover:border-iceteal-300/50 hover:bg-slate-200/80 dark:hover:bg-deepteal-700/30 transition-all shadow-xs"
-          title="Manage Dashboard Experience Mode in Settings"
-        >
-          <span>{dashboardMode === 'simple' ? '🏪 Simple' : '⚡ Advanced'}</span>
-        </button>
 
         {/* Dark / Light Theme Toggle Button */}
         <button
