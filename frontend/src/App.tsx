@@ -2,10 +2,11 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
-import { ModeProvider } from './context/ModeContext';
+import { ModeProvider, useMode } from './context/ModeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
 
+import { Dashboard } from './pages/Dashboard';
 import { ProductionDashboardContent } from './components/dashboard/ProductionDashboardLayout';
 import { Login } from './pages/Login';
 import { Onboarding } from './pages/Onboarding';
@@ -33,6 +34,11 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
+const DashboardRouter: React.FC = () => {
+  const { dashboardMode } = useMode();
+  return dashboardMode === 'simple' ? <Dashboard /> : <ProductionDashboardContent />;
+};
+
 export const AppContent: React.FC = () => {
   return (
     <BrowserRouter>
@@ -56,8 +62,8 @@ export const AppContent: React.FC = () => {
             </ProtectedRoute>
           }
         >
-          {/* Root Route: Clean Light Bento Grid Dashboard */}
-          <Route index element={<ProductionDashboardContent />} />
+          {/* Root Route: Dynamic based on Simple vs Advanced mode */}
+          <Route index element={<DashboardRouter />} />
           <Route path="sites" element={<Sites />} />
           <Route path="vulnerabilities" element={<Vulnerabilities />} />
           <Route path="rules" element={<Rules />} />

@@ -535,59 +535,14 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
           </button>
         </div>
 
-        {/* Compact Mode Switch with Arrow Dropdown (Simple vs Advanced) */}
-        <div ref={modeMenuRef} className="relative">
-          <button
-            onClick={() => setShowModeMenu(!showModeMenu)}
-            className="flex items-center space-x-1 h-8 px-2.5 rounded-lg border border-slate-200 dark:border-cyanteal-500/30 bg-slate-100/90 dark:bg-obsidian-900/90 text-xs font-bold text-slate-800 dark:text-champagne-300 hover:border-copper-500/40 dark:hover:border-iceteal-300/50 hover:bg-slate-200/80 dark:hover:bg-deepteal-700/30 transition-all shadow-xs"
-            title="Switch Dashboard Mode: Simple or Advanced"
-          >
-            <span>{dashboardMode === 'simple' ? '🏪 Simple' : '⚡ Advanced'}</span>
-            <ChevronDown className={`w-3 h-3 text-copper-600 dark:text-iceteal-300 transition-transform duration-150 ${showModeMenu ? 'rotate-180' : ''}`} />
-          </button>
-
-          {showModeMenu && (
-            <div className="absolute right-0 mt-1.5 w-48 rounded-xl glass-panel-elevated py-1 z-50 text-xs border border-slate-200 dark:border-cyanteal-500/40 shadow-xl animate-in fade-in slide-in-from-top-1 duration-100">
-              <div className="px-2.5 py-0.5 text-[9px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-cyanteal-500/20 pb-1 mb-1">
-                Dashboard Mode
-              </div>
-              <button
-                onClick={() => {
-                  setDashboardMode('simple');
-                  setShowModeMenu(false);
-                }}
-                className={`w-full text-left px-2.5 py-1.5 flex items-center justify-between font-medium transition ${
-                  dashboardMode === 'simple'
-                    ? 'bg-copper-50 dark:bg-copper-500/20 text-copper-700 dark:text-copper-300 font-bold border-l-2 border-copper-600 dark:border-copper-500'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-deepteal-700/30 hover:text-slate-900 dark:hover:text-champagne-200'
-                }`}
-              >
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-xs">🏪</span>
-                  <span>Simple (Shopkeeper)</span>
-                </div>
-                {dashboardMode === 'simple' && <Check className="w-3 h-3 text-copper-600" />}
-              </button>
-              <button
-                onClick={() => {
-                  setDashboardMode('advanced');
-                  setShowModeMenu(false);
-                }}
-                className={`w-full text-left px-2.5 py-1.5 flex items-center justify-between font-medium transition ${
-                  dashboardMode === 'advanced'
-                    ? 'bg-teal-50 dark:bg-deepteal-700/40 text-teal-800 dark:text-iceteal-200 font-bold border-l-2 border-teal-600 dark:border-iceteal-300'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-deepteal-700/30 hover:text-slate-900 dark:hover:text-champagne-200'
-                }`}
-              >
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-xs">⚡</span>
-                  <span>Advanced (SecOps)</span>
-                </div>
-                {dashboardMode === 'advanced' && <Check className="w-3 h-3 text-teal-700 dark:text-iceteal-300" />}
-              </button>
-            </div>
-          )}
-        </div>
+        {/* Clean Mode Indicator linking directly to Settings */}
+        <button
+          onClick={() => navigate('/settings')}
+          className="flex items-center space-x-1.5 h-8 px-2.5 rounded-lg border border-slate-200 dark:border-cyanteal-500/30 bg-slate-100/90 dark:bg-obsidian-900/90 text-xs font-semibold text-slate-700 dark:text-champagne-300 hover:border-copper-500/40 dark:hover:border-iceteal-300/50 hover:bg-slate-200/80 dark:hover:bg-deepteal-700/30 transition-all shadow-xs"
+          title="Manage Dashboard Experience Mode in Settings"
+        >
+          <span>{dashboardMode === 'simple' ? '🏪 Simple' : '⚡ Advanced'}</span>
+        </button>
 
         {/* Dark / Light Theme Toggle Button */}
         <button

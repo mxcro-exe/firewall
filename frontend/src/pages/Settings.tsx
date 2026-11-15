@@ -5,10 +5,12 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useMode } from '../context/ModeContext';
 import api from '../services/api';
 
 export const Settings: React.FC = () => {
   const { t } = useLanguage();
+  const { dashboardMode, setDashboardMode } = useMode();
 
   const [activeTab, setActiveTab] = useState<'general' | 'profile' | 'security' | 'notifications' | 'apikeys' | 'about'>('general');
   const [saving, setSaving] = useState(false);
@@ -167,7 +169,63 @@ export const Settings: React.FC = () => {
 
       {/* Tab 1: General */}
       {activeTab === 'general' && (
-        <form onSubmit={handleSaveGeneral} className="max-w-xl space-y-4 text-xs">
+        <div className="max-w-2xl space-y-6 text-xs">
+          {/* Dashboard Experience Mode Selector */}
+          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+            <div>
+              <h3 className="font-bold text-sm text-slate-900 dark:text-champagne-300">
+                Dashboard Experience Mode
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Switch between the simple merchant store view and advanced SecOps command deck.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {/* Simple Mode Card */}
+              <div
+                onClick={() => setDashboardMode('simple')}
+                className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                  dashboardMode === 'simple'
+                    ? 'bg-copper-500/10 border-copper-500 ring-2 ring-copper-500/30 text-copper-900 dark:text-copper-200 shadow-sm'
+                    : 'bg-slate-50/50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-base">🏪</span>
+                    <span className="font-bold text-xs">Simple (Shopkeeper)</span>
+                  </div>
+                  {dashboardMode === 'simple' && <Check className="w-4 h-4 text-copper-600 dark:text-copper-400" />}
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Clean, merchant-friendly view for retail shop owners. Plain words, zero technical jargon.
+                </p>
+              </div>
+
+              {/* Advanced Mode Card */}
+              <div
+                onClick={() => setDashboardMode('advanced')}
+                className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                  dashboardMode === 'advanced'
+                    ? 'bg-teal-500/10 border-teal-500 ring-2 ring-teal-500/30 text-teal-900 dark:text-teal-200 shadow-sm'
+                    : 'bg-slate-50/50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-base">⚡</span>
+                    <span className="font-bold text-xs">Advanced (SecOps)</span>
+                  </div>
+                  {dashboardMode === 'advanced' && <Check className="w-4 h-4 text-teal-600 dark:text-teal-400" />}
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Complete SecOps telemetry, 20 attack defense modules, AST ReDoS engine & kernel drops.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSaveGeneral} className="space-y-4">
           <div>
             <label className="block font-medium text-slate-700 dark:text-slate-300 mb-1">Project Name</label>
             <input
@@ -216,6 +274,7 @@ export const Settings: React.FC = () => {
             <span>{saving ? 'Saving...' : t('settings.save')}</span>
           </button>
         </form>
+      </div>
       )}
 
       {/* Tab 2: Profile */}

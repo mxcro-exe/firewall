@@ -14,7 +14,7 @@ const ModeContext = createContext<ModeContextType | undefined>(undefined);
 
 export const ModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [dashboardMode, setDashboardModeState] = useState<DashboardMode>(() => {
-    return (localStorage.getItem('patchshield_ui_mode') as DashboardMode) || 'advanced';
+    return (localStorage.getItem('patchshield_ui_mode') as DashboardMode) || 'simple';
   });
 
   const [globalMode, setGlobalModeState] = useState<GlobalSecurityMode>('PROTECT');
